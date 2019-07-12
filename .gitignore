@@ -27,3 +27,4 @@ transferapi/.idea/
 transferapi/target/
 */.idea/
 *.iml
+.DS_Store
