@@ -25,3 +25,4 @@ hs_err_pid*
 #Custom
 transferapi/.idea/
 transferapi/target/
+*/.idea/
