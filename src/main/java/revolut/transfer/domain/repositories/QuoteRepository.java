@@ -1,6 +1,6 @@
 package revolut.transfer.domain.repositories;
 
-import revolut.transfer.domain.quotes.Quote;
+import revolut.transfer.domain.models.quotes.Quote;
 
 import java.util.List;
 

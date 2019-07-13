@@ -1,12 +1,10 @@
-package revolut.transfer.domain.accounts;
+package revolut.transfer.domain.models.accounts;
 
-import lombok.Data;
-import revolut.transfer.domain.currency.CurrencyType;
+import lombok.Value;
 
 import java.util.List;
-import java.util.Set;
 
-@Data
+@Value
 public class AccountHolder {
 
     private final String id;
@@ -14,4 +12,6 @@ public class AccountHolder {
     private final String firstName;
     private final String lastName;
     private final String emailAddress;
+    private final List<Account> accounts;
+
 }

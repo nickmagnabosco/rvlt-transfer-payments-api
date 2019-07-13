@@ -1,7 +1,7 @@
-package revolut.transfer.domain;
+package revolut.transfer.domain.models;
 
 import lombok.Data;
-import revolut.transfer.domain.currency.CurrencyType;
+import revolut.transfer.domain.models.currency.CurrencyType;
 
 import java.math.BigDecimal;
 

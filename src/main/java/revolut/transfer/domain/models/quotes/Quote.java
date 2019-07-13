@@ -1,7 +1,7 @@
-package revolut.transfer.domain.quotes;
+package revolut.transfer.domain.models.quotes;
 
 import lombok.Value;
-import revolut.transfer.domain.MonetaryAmount;
+import revolut.transfer.domain.models.MonetaryAmount;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

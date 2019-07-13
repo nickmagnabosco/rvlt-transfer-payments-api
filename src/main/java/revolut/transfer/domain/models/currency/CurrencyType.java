@@ -1,4 +1,4 @@
-package revolut.transfer.domain.currency;
+package revolut.transfer.domain.models.currency;
 
 public enum CurrencyType {
     GBP,

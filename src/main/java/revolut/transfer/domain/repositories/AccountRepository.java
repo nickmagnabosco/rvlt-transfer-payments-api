@@ -1,6 +1,6 @@
 package revolut.transfer.domain.repositories;
 
-import revolut.transfer.domain.accounts.Account;
+import revolut.transfer.domain.models.accounts.Account;
 
 import java.util.List;
 
