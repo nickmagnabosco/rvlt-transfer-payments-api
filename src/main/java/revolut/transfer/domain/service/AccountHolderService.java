@@ -6,6 +6,7 @@ import revolut.transfer.domain.repositories.AccountHolderRepository;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.List;
 
 @Singleton
 public class AccountHolderService {
@@ -18,6 +19,10 @@ public class AccountHolderService {
 
     public AccountHolder getAccountHolderById(String accountHolderId) {
         return accountHolderRepository.getAccountHolderById(accountHolderId);
+    }
+
+    public List<AccountHolder> getAllAccountHolders() {
+        return accountHolderRepository.getAllAccountHolders();
     }
 
     public String createAccountHolder(CreateAccountHolderCommand createAccountHolderCommand) {

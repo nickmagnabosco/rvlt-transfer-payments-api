@@ -1,6 +1,5 @@
 package revolut.transfer.integration.adapters;
 
-import revolut.transfer.domain.repositories.AccountHolderRepository;
 import revolut.transfer.integration.dto.command.CreateAccountHolder;
 import revolut.transfer.integration.service.AccountHolderService;
 
@@ -25,17 +24,13 @@ public class AccountHolderAdapter extends Adapter {
 //            return accountHolderAdapter.getAllAccountHolders();
 //        }, jsonTransformer);
 
-        get("/accountHolders/:holderId", (req, response) -> accountHolderService.getAccountHolderById(req.params("holderId")), jsonTransformer);
+        get("/accountHolders/:holderId", (req, response) -> accountHolderService.getAccountHolderDetailsById(req.params("holderId")), jsonTransformer);
 
-//        get("/accountHolders/:holderId/accounts", (req, response) -> accountHolderAdapter.getAccountHolderById(req.params("holderId")), jsonTransformer);
+//        get("/accountHolders/:holderId/accounts", (req, response) -> accountHolderAdapter.getAccountHolderDetailsById(req.params("holderId")), jsonTransformer);
 //
-//        get("/accountHolders/:holderId/accounts/:accountId", (req, response) -> accountHolderAdapter.getAccountHolderById(req.params("holderId")), jsonTransformer);
+//        get("/accountHolders/:holderId/accounts/:accountId", (req, response) -> accountHolderAdapter.getAccountHolderDetailsById(req.params("holderId")), jsonTransformer);
 
-        post("/accountHolders", (req, response) -> {
-            CreateAccountHolder createAccountHolder = objectMapper.readValue(req.body(), CreateAccountHolder.class);
-//            accountHolderAdapter.createAccountHolder(new AccountHolder(UUID.randomUUID().toString(), createAccountHolder.getTitle(), createAccountHolder.getFirstName(), createAccountHolder.getLastName(), createAccountHolder.getEmailAddress()));
-            return "";
-        });
+        post("/accountHolders", (req, response) -> accountHolderService.createAccountHolder(objectMapper.readValue(req.body(), CreateAccountHolder.class)));
 
         get("/accountHolders/:holderId/transfers", (req, response) -> {
             return "";

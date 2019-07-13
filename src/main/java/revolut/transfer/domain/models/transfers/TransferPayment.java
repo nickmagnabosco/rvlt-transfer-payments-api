@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class TransferPayment {
 
     private final String id;
+    private final String requestId;
     private final String sourceAccountId;
     private final String targetAccountId;
     private final String quoteId;

@@ -22,9 +22,8 @@ public class StubAccountHolderRepositoryImpl implements AccountHolderRepository 
 
     @Override
     public String createAccountHolder(CreateAccountHolderCommand accountHolder) {
-//        accountHolders.add(accountHolder);
-//        return accountHolder.getId();
-        return null;
+        accountHolders.add(accountHolder.toAccountHolder());
+        return accountHolder.getId();
     }
 
     @Override
