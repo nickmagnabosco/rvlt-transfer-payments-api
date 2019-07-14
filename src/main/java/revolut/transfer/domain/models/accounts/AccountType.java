@@ -2,12 +2,30 @@ package revolut.transfer.domain.models.accounts;
 
 import revolut.transfer.domain.exceptions.ValidationException;
 import revolut.transfer.domain.exceptions.ValidationFailure;
+import revolut.transfer.domain.models.MonetaryAmount;
+import revolut.transfer.domain.models.currency.CurrencyType;
 import spark.utils.StringUtils;
 
 public enum AccountType {
-    UK, // Account with sort code and account number
-    IBAN,
-    USD; // routing number, account number, account type
+    UK(CurrencyType.GBP, MonetaryAmount.ZERO_GBP), // Account with sort code and account number
+    IBAN(CurrencyType.EUR, MonetaryAmount.ZERO_EUR),
+    USD(CurrencyType.USD, MonetaryAmount.ZERO_USD); // routing number, account number, account type
+
+    private final CurrencyType accountCurrency;
+    private final MonetaryAmount initialAmount;
+
+    public CurrencyType getAccountCurrency() {
+        return accountCurrency;
+    }
+
+    public MonetaryAmount getInitialAmount() {
+        return initialAmount;
+    }
+
+    AccountType(CurrencyType accountCurrency, MonetaryAmount initialAmount) {
+        this.accountCurrency = accountCurrency;
+        this.initialAmount = initialAmount;
+    }
 
     public static AccountType fromString(String value) {
         try {

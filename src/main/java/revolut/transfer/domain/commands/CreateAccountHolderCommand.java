@@ -2,6 +2,7 @@ package revolut.transfer.domain.commands;
 
 import com.google.common.collect.Lists;
 import lombok.Value;
+import lombok.experimental.NonFinal;
 import revolut.transfer.domain.exceptions.ValidationException;
 import revolut.transfer.domain.exceptions.ValidationFailure;
 import revolut.transfer.domain.models.accounts.*;
@@ -12,6 +13,7 @@ import spark.utils.StringUtils;
 import java.util.List;
 
 @Value
+@NonFinal
 public class CreateAccountHolderCommand {
     private final String id;
     private final UserTitle title;
@@ -21,13 +23,13 @@ public class CreateAccountHolderCommand {
     private final AccountType defaultAccountType;
     private final AccountHolderRepository accountHolderRepository;
     private final AccountRepository accountRepository;
-    private final AccountDetailsFactory accountDetailsFactory;
+    private final AccountFactory accountFactory;
 
-    public String execute() {
+    public AccountHolder execute() {
         validate();
-        String accountHolderId = accountHolderRepository.createAccountHolder(this);
-        accountRepository.createAccount(Account.createInitialAccount(this, accountDetailsFactory));
-        return accountHolderId;
+        accountHolderRepository.createAccountHolder(this);
+        Account account = accountRepository.createAccount(accountFactory.createAccount(id, defaultAccountType));
+        return toAccountHolder(Lists.newArrayList(account));
     }
 
     public void validate() {
@@ -52,11 +54,15 @@ public class CreateAccountHolderCommand {
     }
 
     public AccountHolder toAccountHolder() {
+        return toAccountHolder(accountRepository.getAllAccountsByHolderId(id));
+    }
+
+    public AccountHolder toAccountHolder(List<Account> accounts) {
         return new AccountHolder(id,
                 title,
                 firstName,
                 lastName,
                 emailAddress,
-                accountRepository.getAllAccountsByHolderId(id));
+                accounts);
     }
 }

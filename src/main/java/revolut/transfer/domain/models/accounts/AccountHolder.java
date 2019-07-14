@@ -1,10 +1,12 @@
 package revolut.transfer.domain.models.accounts;
 
 import lombok.Value;
+import lombok.experimental.NonFinal;
 
 import java.util.List;
 
 @Value
+@NonFinal
 public class AccountHolder {
 
     private final String id;

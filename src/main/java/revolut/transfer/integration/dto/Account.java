@@ -10,13 +10,13 @@ import revolut.transfer.domain.models.MonetaryAmount;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AccountDetails {
+public class Account {
 
     private String id;
     private String accountHolderId;
     private String accountType;
-    private BankAccountDetails accountDetails;
     private String currencyType;
     private MonetaryAmount availableFunds;
+    private BankAccountDetails bankAccountDetails;
 
 }

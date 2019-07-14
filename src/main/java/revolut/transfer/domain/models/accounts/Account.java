@@ -1,13 +1,12 @@
 package revolut.transfer.domain.models.accounts;
 
-import lombok.Data;
-import revolut.transfer.domain.commands.CreateAccountHolderCommand;
+import lombok.*;
+import lombok.experimental.NonFinal;
 import revolut.transfer.domain.models.MonetaryAmount;
 import revolut.transfer.domain.models.currency.CurrencyType;
 
-import java.util.UUID;
-
-@Data
+@Value
+@NonFinal
 public class Account {
 
     private final String id;
@@ -19,28 +18,4 @@ public class Account {
     private final CurrencyType currencyType;
     private final MonetaryAmount balance;
 
-    public static Account createInitialAccount(CreateAccountHolderCommand createAccountHolderCommand, AccountDetailsFactory accountDetailsFactory) {
-        AccountType defaultAccountType = createAccountHolderCommand.getDefaultAccountType();
-        CurrencyType currencyTypeForAccount = accountDetailsFactory.getCurrencyTypeForAccount(defaultAccountType);
-        return new Account(UUID.randomUUID().toString(),
-                createAccountHolderCommand.getId(),
-                "Primary Account",
-                defaultAccountType,
-                accountDetailsFactory.createBankAccountDetails(),
-                currencyTypeForAccount,
-                getInitialAvailableFound(currencyTypeForAccount));
-    }
-
-    public static MonetaryAmount getInitialAvailableFound(CurrencyType currencyType) {
-        switch (currencyType) {
-            case USD:
-                return MonetaryAmount.ZERO_USD;
-            case EUR:
-                return MonetaryAmount.ZERO_EUR;
-            case GBP:
-                return MonetaryAmount.ZERO_GBP;
-            default:
-                throw new IllegalArgumentException("Unsupported currency");
-        }
-    }
 }

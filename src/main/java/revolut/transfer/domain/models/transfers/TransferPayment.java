@@ -17,7 +17,6 @@ public class TransferPayment {
     private final TransferStatus status;
     private final TransferType transferType;
     private final LocalDateTime dateTimeCreated;
-    private final MonetaryAmount sourceValue;
-    private final MonetaryAmount targetValue;
+    private final MonetaryAmount transferAmount;
 
 }

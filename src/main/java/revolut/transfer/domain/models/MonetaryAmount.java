@@ -1,15 +1,19 @@
 package revolut.transfer.domain.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import revolut.transfer.domain.models.currency.CurrencyType;
 
 import java.math.BigDecimal;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class MonetaryAmount {
 
-    private final BigDecimal amount;
-    private final CurrencyType currencyType;
+    private BigDecimal amount;
+    private CurrencyType currencyType;
 
     public static MonetaryAmount ZERO_GBP = new MonetaryAmount(BigDecimal.ZERO, CurrencyType.GBP);
     public static MonetaryAmount ZERO_USD = new MonetaryAmount(BigDecimal.ZERO, CurrencyType.GBP);

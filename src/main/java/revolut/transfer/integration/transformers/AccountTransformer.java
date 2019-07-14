@@ -1,10 +1,10 @@
 package revolut.transfer.integration.transformers;
 
+import revolut.transfer.domain.commands.CreateAccountCommand;
 import revolut.transfer.domain.commands.CreateAccountHolderCommand;
 import revolut.transfer.domain.models.accounts.*;
 import revolut.transfer.domain.repositories.AccountHolderRepository;
 import revolut.transfer.domain.repositories.AccountRepository;
-import revolut.transfer.integration.dto.AccountDetails;
 import revolut.transfer.integration.dto.AccountHolderDetails;
 import revolut.transfer.integration.dto.BankAccountDetails;
 import revolut.transfer.integration.dto.command.CreateAccountHolder;
@@ -15,18 +15,18 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Singleton
-public class AccountHolderTransformer {
+public class AccountTransformer {
 
     private final AccountHolderRepository accountHolderRepository;
     private final AccountRepository accountRepository;
-    private final AccountDetailsFactory accountDetailsFactory;
+    private final AccountFactory accountFactory;
 
     @Inject
-    public AccountHolderTransformer(AccountHolderRepository accountHolderRepository, AccountRepository accountRepository,
-            AccountDetailsFactory accountDetailsFactory) {
+    public AccountTransformer(AccountHolderRepository accountHolderRepository, AccountRepository accountRepository,
+            AccountFactory accountFactory) {
         this.accountHolderRepository = accountHolderRepository;
         this.accountRepository = accountRepository;
-        this.accountDetailsFactory = accountDetailsFactory;
+        this.accountFactory = accountFactory;
     }
 
     public CreateAccountHolderCommand transform(CreateAccountHolder createAccountHolder) {
@@ -39,7 +39,7 @@ public class AccountHolderTransformer {
                 AccountType.fromString(createAccountHolder.getDefaultAccountType()),
                 accountHolderRepository,
                 accountRepository,
-                accountDetailsFactory
+                accountFactory
         );
     }
 
@@ -49,19 +49,27 @@ public class AccountHolderTransformer {
                 accountHolder.getFirstName(),
                 accountHolder.getLastName(),
                 accountHolder.getEmailAddress(),
-                accountHolder.getAccounts().stream().map(this::transformAccountDetails).collect(Collectors.toList()));
+                accountHolder.getAccounts().stream().map(this::transformAccount).collect(Collectors.toList()));
     }
 
-    public AccountDetails transformAccountDetails(Account account) {
-        return new AccountDetails(account.getId(),
+    public revolut.transfer.integration.dto.Account transformAccount(revolut.transfer.domain.models.accounts.Account account) {
+        return new revolut.transfer.integration.dto.Account(account.getId(),
                 account.getAccountHolderId(),
                 account.getAccountType().name(),
-                transformBankAccountDetails(account.getBankAccountDetails()),
                 account.getCurrencyType().name(),
-                account.getBalance());
+                account.getBalance(),
+                transformBankAccountDetails(account.getBankAccountDetails()));
     }
 
     public BankAccountDetails transformBankAccountDetails(revolut.transfer.domain.models.accounts.BankAccountDetails domain) {
         return new BankAccountDetails(domain.getIban(), domain.getSortCode(), domain.getAccountNumber());
+    }
+
+    public CreateAccountCommand transformCreateAccount(String accountHolderId, revolut.transfer.integration.dto.command.CreateAccountCommand dto) {
+        return new CreateAccountCommand(
+                accountHolderId,
+                AccountType.fromString(dto.getAccountType()),
+                accountRepository,
+                accountFactory);
     }
 }

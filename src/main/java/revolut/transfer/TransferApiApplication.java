@@ -9,7 +9,7 @@ import static spark.Spark.port;
 public class TransferApiApplication {
     private ApplicationComponent applicationComponent;
 
-    private void start() {
+    public void start() {
         applicationComponent = DaggerApplicationComponent.create();
         applicationComponent.applicationBootstrapInitializer().initialize();
     }

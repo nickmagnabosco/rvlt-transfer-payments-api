@@ -1,5 +1,6 @@
 package revolut.transfer.integration.repositories;
 
+import com.google.common.collect.Lists;
 import revolut.transfer.domain.models.accounts.Account;
 import revolut.transfer.domain.repositories.AccountRepository;
 
@@ -9,13 +10,16 @@ import java.util.List;
 
 @Singleton
 public class StubAccountRepositoryImpl implements AccountRepository {
+    public static List<Account> accounts = Lists.newArrayList();
+
     @Inject
     public StubAccountRepositoryImpl() {
     }
 
     @Override
-    public String createAccount(Account account) {
-        return null;
+    public Account createAccount(Account account) {
+        accounts.add(account);
+        return account;
     }
 
     @Override

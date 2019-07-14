@@ -6,6 +6,8 @@ import dagger.Module;
 import dagger.Provides;
 import revolut.transfer.domain.repositories.AccountHolderRepository;
 import revolut.transfer.domain.repositories.AccountRepository;
+import revolut.transfer.domain.service.BankAccountService;
+import revolut.transfer.domain.service.StubBankAccountServiceImpl;
 import revolut.transfer.integration.adapters.JsonTransformer;
 import revolut.transfer.integration.repositories.StubAccountHolderRepositoryImpl;
 import revolut.transfer.integration.repositories.StubAccountRepositoryImpl;
@@ -33,4 +35,10 @@ public class CommonModule {
     public ResponseTransformer responseTransformer(JsonTransformer jsonTransformer) {
         return jsonTransformer;
     }
+
+    @Provides
+    public BankAccountService bankAccountService(StubBankAccountServiceImpl impl) {
+        return impl;
+    }
+
 }

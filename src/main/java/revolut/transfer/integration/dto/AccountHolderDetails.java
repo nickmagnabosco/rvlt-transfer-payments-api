@@ -17,5 +17,5 @@ public class AccountHolderDetails {
     private String firstName;
     private String lastName;
     private String emailAddress;
-    private List<AccountDetails> accounts;
+    private List<Account> accounts;
 }
