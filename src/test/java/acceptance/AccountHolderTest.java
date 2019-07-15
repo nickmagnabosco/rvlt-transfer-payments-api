@@ -119,4 +119,19 @@ public class AccountHolderTest extends ComponentTest {
         assertThat(response.getAccounts()).isEqualTo(accountHolderDetails.getAccounts());
     }
 
+    @Test
+    public void getAccountHolderById_accountDoesNotExist_404() {
+        givenAccountHolder(new CreateAccountHolder(
+                "MR",
+                "Clint",
+                "Eastwood",
+                "myemail@address.com",
+                "UK"));
+
+        when()
+                .get(getFullUrl("/accountHolders/123"))
+                .then()
+                .statusCode(404);
+    }
+
 }
