@@ -36,11 +36,7 @@ public class AccountService {
     }
 
     public Account getAccountByHolderIdAndAccountId(String accountHolderId, String accountId) {
-        return accountRepository.getAllAccountsByHolderId(accountHolderId)
-                .stream()
-                .filter(account -> account.getId().equals(accountId))
-                .findFirst()
-                .orElse(null);
+        return accountRepository.getAllAccountsByHolderIdAndAccountId(accountHolderId, accountId);
     }
 
     public Account createAccount(CreateAccountCommand createAccountCommand) {

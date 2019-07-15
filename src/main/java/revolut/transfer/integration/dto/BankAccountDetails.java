@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class BankAccountDetails {
 
     private String iban;
+    private String bic;
     private String sortCode;
     private String accountNumber;
 }

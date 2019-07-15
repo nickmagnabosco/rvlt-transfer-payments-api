@@ -27,9 +27,8 @@ public class CreateAccountHolderCommand {
 
     public AccountHolder execute() {
         validate();
-        accountHolderRepository.createAccountHolder(this);
-        Account account = accountRepository.createAccount(accountFactory.createAccount(id, defaultAccountType));
-        return toAccountHolder(Lists.newArrayList(account));
+        accountRepository.createAccount(accountFactory.createAccount(id, defaultAccountType));
+        return accountHolderRepository.createAccountHolder(this);
     }
 
     public void validate() {

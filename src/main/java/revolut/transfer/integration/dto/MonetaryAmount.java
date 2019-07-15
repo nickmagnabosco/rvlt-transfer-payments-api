@@ -5,17 +5,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Account {
-
-    private String id;
-    private String accountHolderId;
-    private String accountType;
+public class MonetaryAmount {
+    private BigDecimal amount;
     private String currencyType;
-    private MonetaryAmount balance;
-    private BankAccountDetails bankAccountDetails;
 
+    public MonetaryAmount(revolut.transfer.domain.models.MonetaryAmount monetaryAmount) {
+        amount = monetaryAmount.getAmount();
+        currencyType = monetaryAmount.getCurrencyType().name();
+    }
 }

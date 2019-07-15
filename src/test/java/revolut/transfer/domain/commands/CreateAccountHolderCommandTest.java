@@ -253,8 +253,10 @@ public class CreateAccountHolderCommandTest {
     public void execute_returnsAccountHolder() {
         Account account = mock(Account.class);
         Account createdAccount = mock(Account.class);
+        AccountHolder createAccountHolder = mock(AccountHolder.class);
         when(accountFactory.createAccount("id123", AccountType.IBAN)).thenReturn(account);
-        when(accountRepository.createAccount(account)).thenReturn(createdAccount);
+        when(accountRepository.createAccount(any())).thenReturn(createdAccount);
+        when(accountHolderRepository.createAccountHolder(any())).thenReturn(createAccountHolder);
         CreateAccountHolderCommand subject = new CreateAccountHolderCommand(
                 "id123",
                 UserTitle.MR,
@@ -268,12 +270,6 @@ public class CreateAccountHolderCommandTest {
         );
 
         AccountHolder accountHolder = subject.execute();
-        assertThat(accountHolder.getId()).isEqualTo("id123");
-        assertThat(accountHolder.getTitle()).isEqualTo(UserTitle.MR);
-        assertThat(accountHolder.getFirstName()).isEqualTo("Jon");
-        assertThat(accountHolder.getLastName()).isEqualTo("Doe");
-        assertThat(accountHolder.getEmailAddress()).isEqualTo("email@address.com");
-        assertThat(accountHolder.getAccounts()).hasSize(1);
-        assertThat(accountHolder.getAccounts()).contains(createdAccount);
+        assertThat(accountHolder).isEqualTo(createAccountHolder);
     }
 }

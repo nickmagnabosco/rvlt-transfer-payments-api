@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface AccountHolderRepository {
 
-    String createAccountHolder(CreateAccountHolderCommand accountHolder);
+    AccountHolder createAccountHolder(CreateAccountHolderCommand accountHolder);
     AccountHolder getAccountHolderById(String accountHolderId);
     List<AccountHolder> getAllAccountHolders();
 

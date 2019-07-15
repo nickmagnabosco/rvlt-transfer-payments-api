@@ -11,7 +11,6 @@ public class Account {
 
     private final String id;
     private final String accountHolderId;
-    private final String name;
     private final AccountType accountType;
     private final BankAccountDetails bankAccountDetails;
 

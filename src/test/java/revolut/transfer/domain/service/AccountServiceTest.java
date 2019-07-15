@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import revolut.transfer.domain.commands.CreateAccountCommand;
 import revolut.transfer.domain.commands.CreateAccountHolderCommand;
+import revolut.transfer.domain.exceptions.ResourceNotFoundException;
 import revolut.transfer.domain.models.accounts.Account;
 import revolut.transfer.domain.models.accounts.AccountHolder;
 import revolut.transfer.domain.repositories.AccountHolderRepository;
@@ -102,15 +103,10 @@ public class AccountServiceTest {
         assertThat(result).isNull();
     }
 
-    @Test
-    public void getAccountByHolderIdAndAccountId_whenNoAccountReturnsNull() {
-        Account account1 = mock(Account.class);
-        when(account1.getId()).thenReturn("account123");
-        Account account2 = mock(Account.class);
-        when(account2.getId()).thenReturn("account234");
-        when(accountRepository.getAllAccountsByHolderId("holder123")).thenReturn(Lists.newArrayList(account1, account2));
+    @Test(expected = ResourceNotFoundException.class)
+    public void getAccountByHolderIdAndAccountId_whenNoAccountReturnsResourceNotFoundException() {
+        doThrow(new ResourceNotFoundException()).when(accountRepository).getAllAccountsByHolderIdAndAccountId("holder123", "account123");
 
-        Account result = subject.getAccountByHolderIdAndAccountId("holder123", "account123");
-        assertThat(result).isEqualTo(account1);
+        subject.getAccountByHolderIdAndAccountId("holder123", "account123");
     }
 }

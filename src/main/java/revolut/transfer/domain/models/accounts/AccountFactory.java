@@ -10,8 +10,6 @@ import java.util.UUID;
 @Singleton
 public class AccountFactory {
 
-    private static final String PRIMARY_ACCOUNT = "Primary Account";
-
     private final BankAccountService bankDetailsService;
 
     @Inject
@@ -24,7 +22,6 @@ public class AccountFactory {
         return new Account(
                 UUID.randomUUID().toString(),
                 accountHolderId,
-                PRIMARY_ACCOUNT,
                 accountType,
                 bankDetailsService.createBankAccountDetails(accountType),
                 accountCurrency,

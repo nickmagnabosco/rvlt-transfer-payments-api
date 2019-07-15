@@ -7,6 +7,7 @@ import revolut.transfer.domain.repositories.AccountHolderRepository;
 import revolut.transfer.domain.repositories.AccountRepository;
 import revolut.transfer.integration.dto.AccountHolderDetails;
 import revolut.transfer.integration.dto.BankAccountDetails;
+import revolut.transfer.integration.dto.MonetaryAmount;
 import revolut.transfer.integration.dto.command.CreateAccountHolder;
 
 import javax.inject.Inject;
@@ -57,12 +58,12 @@ public class AccountTransformer {
                 account.getAccountHolderId(),
                 account.getAccountType().name(),
                 account.getCurrencyType().name(),
-                account.getBalance(),
+                new MonetaryAmount(account.getBalance()),
                 transformBankAccountDetails(account.getBankAccountDetails()));
     }
 
     public BankAccountDetails transformBankAccountDetails(revolut.transfer.domain.models.accounts.BankAccountDetails domain) {
-        return new BankAccountDetails(domain.getIban(), domain.getSortCode(), domain.getAccountNumber());
+        return new BankAccountDetails(domain.getIban(), domain.getBic(), domain.getSortCode(), domain.getAccountNumber());
     }
 
     public CreateAccountCommand transformCreateAccount(String accountHolderId, revolut.transfer.integration.dto.command.CreateAccountCommand dto) {

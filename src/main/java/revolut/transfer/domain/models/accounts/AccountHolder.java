@@ -16,4 +16,7 @@ public class AccountHolder {
     private final String emailAddress;
     private final List<Account> accounts;
 
+    public AccountHolder withAccounts(List<Account> accountList) {
+        return new AccountHolder(id, title, firstName, lastName, emailAddress, accountList);
+    }
 }
