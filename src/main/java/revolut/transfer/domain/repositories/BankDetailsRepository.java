@@ -6,4 +6,5 @@ import revolut.transfer.domain.models.accounts.BankAccountDetails;
 public interface BankDetailsRepository {
     String createBankDetails(Handle handle, String accountId, BankAccountDetails bankAccountDetails);
     BankAccountDetails getBankDetailsByAccountId(String accountId);
+    BankAccountDetails getBankDetailsByAccountId(Handle handle, String accountId);
 }

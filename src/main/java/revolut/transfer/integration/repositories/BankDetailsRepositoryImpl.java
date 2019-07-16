@@ -20,6 +20,22 @@ public class BankDetailsRepositoryImpl implements BankDetailsRepository {
     }
 
     @Override
+    public BankAccountDetails getBankDetailsByAccountId(Handle handle, String accountId) {
+        return handle.createQuery(
+                "SELECT id, account_id, iban, bic, sort_code, account_number "
+                        + "FROM BANK_DETAILS "
+                        + "WHERE account_id=:accountId")
+                .bind("accountId", accountId)
+                .map(bankDetailsMapper)
+                .findOnly();
+    }
+
+    @Override
+    public BankAccountDetails getBankDetailsByAccountId(String accountId) {
+        return jdbiProvider.getJdbi().withHandle(handle -> getBankDetailsByAccountId(handle, accountId));
+    }
+
+    @Override
     public String createBankDetails(Handle handle, String accountId, BankAccountDetails bankAccountDetails) {
         handle.createUpdate("INSERT INTO BANK_DETAILS (id, account_id, iban, bic, sort_code, account_number) "
                 + "VALUES (:id, :accountId, :iban, :bic, :sortCode, :accountNumber)")
@@ -31,16 +47,5 @@ public class BankDetailsRepositoryImpl implements BankDetailsRepository {
                 .bind("accountNumber", bankAccountDetails.getAccountNumber())
                 .execute();
         return bankAccountDetails.getId();
-    }
-
-    @Override
-    public BankAccountDetails getBankDetailsByAccountId(String accountId) {
-        return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
-                "SELECT id, account_id, iban, bic, sort_code, account_number "
-                        + "FROM BANK_DETAILS "
-                        + "WHERE account_id=:accountId")
-                .bind("accountId", accountId)
-                .map(bankDetailsMapper)
-                .findOnly());
     }
 }

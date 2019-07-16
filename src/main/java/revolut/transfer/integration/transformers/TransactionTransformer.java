@@ -44,7 +44,8 @@ public class TransactionTransformer {
                 dto.getDepositAmount().toDomain(),
                 transactionRepository,
                 transactionFactory,
-                accountRepository
+                accountRepository,
+                fundTransactionFactory
         );
     }
 

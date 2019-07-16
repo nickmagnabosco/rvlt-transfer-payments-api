@@ -18,6 +18,13 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     private final TransactionMapper transactionMapper;
     private final JDBIProvider jdbiProvider;
 
+
+    @Inject
+    public TransactionRepositoryImpl(TransactionMapper transactionMapper, JDBIProvider jdbiProvider) {
+        this.transactionMapper = transactionMapper;
+        this.jdbiProvider = jdbiProvider;
+    }
+
     @Override
     public String createTransaction(Handle handle, Transaction transaction) {
         handle.execute("INSERT INTO TRANSACTION (id, request_id, account_id, status, type, amount_value, amount_currency_type, created_datetime) "
@@ -34,49 +41,43 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     }
 
     @Override
-    public void updateStatus(Handle handle, String transactionId, TransactionStatus status) {
-        handle.execute("UPDATE TRANSACTION "
-                + "SET status=? "
-                + "WHERE id=?", status, transactionId);
-    }
-
-    @Override
-    public Optional<Transaction> getTransactionByRequestId(String requestId) {
-        return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
+    public Optional<Transaction> getTransactionByRequestId(Handle handle, String requestId) {
+        return handle.createQuery(
                 SELECT_TRANSACTION
                         + "FROM TRANSACTION "
                         + "WHERE request_id=:requestId")
                 .bind("requestId", requestId)
                 .map(transactionMapper)
-                .findFirst());
-    }
-
-    @Inject
-    public TransactionRepositoryImpl(TransactionMapper transactionMapper, JDBIProvider jdbiProvider) {
-        this.transactionMapper = transactionMapper;
-        this.jdbiProvider = jdbiProvider;
+                .findFirst();
     }
 
     @Override
-    public Optional<Transaction> getTransactionById(String id) {
-        return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
-                SELECT_TRANSACTION
-                        + "FROM TRANSACTION "
-                        + "WHERE id=:id")
-                .bind("id", id)
-                .map(transactionMapper)
-                .findFirst());
+    public Optional<Transaction> getTransactionByRequestId(String requestId) {
+        return jdbiProvider.getJdbi().withHandle(handle -> getTransactionByRequestId(handle, requestId));
     }
 
     @Override
-    public List<Transaction> getAllTransactionsByAccountId(String accountId) {
-        return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
+    public List<Transaction> getAllTransactionsByAccountId(Handle handle, String accountId) {
+        return handle.createQuery(
                 SELECT_TRANSACTION
                         + "FROM TRANSACTION "
                         + "WHERE account_id=:accountId "
                         + "ORDER BY created_datetime ASC")
                 .bind("accountId", accountId)
                 .map(transactionMapper)
-                .list());
+                .list();
     }
+
+    @Override
+    public List<Transaction> getAllTransactionsByAccountId(String accountId) {
+        return jdbiProvider.getJdbi().withHandle(handle -> getAllTransactionsByAccountId(handle, accountId));
+    }
+
+    @Override
+    public void updateStatus(Handle handle, String transactionId, TransactionStatus status) {
+        handle.execute("UPDATE TRANSACTION "
+                + "SET status=? "
+                + "WHERE id=?", status, transactionId);
+    }
+
 }

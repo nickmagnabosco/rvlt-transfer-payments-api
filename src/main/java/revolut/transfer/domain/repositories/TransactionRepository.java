@@ -9,9 +9,13 @@ import java.util.Optional;
 
 public interface TransactionRepository {
     String createTransaction(Handle handle, Transaction transaction);
+
     void updateStatus(Handle handle, String transactionId, TransactionStatus status);
+
     Optional<Transaction> getTransactionByRequestId(String requestId);
-    Optional<Transaction> getTransactionById(String id);
+    Optional<Transaction> getTransactionByRequestId(Handle handle, String requestId);
+
     List<Transaction> getAllTransactionsByAccountId(String accountId);
+    List<Transaction> getAllTransactionsByAccountId(Handle handle, String accountId);
 
 }

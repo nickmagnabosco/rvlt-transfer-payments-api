@@ -10,6 +10,7 @@ import revolut.transfer.domain.models.accounts.Account;
 import revolut.transfer.domain.models.transactions.Transaction;
 import revolut.transfer.domain.models.transactions.TransactionStatus;
 import revolut.transfer.domain.models.transactions.TransactionType;
+import revolut.transfer.domain.models.transfers.FundTransactionFactory;
 import revolut.transfer.domain.repositories.AccountRepository;
 import revolut.transfer.domain.repositories.TransactionFactory;
 import revolut.transfer.domain.repositories.TransactionRepository;
@@ -17,6 +18,9 @@ import spark.utils.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static revolut.transfer.domain.models.transactions.TransactionStatus.IN_PROGRESS;
+import static revolut.transfer.domain.models.transactions.TransactionType.DEPOSIT;
 
 @Value
 @NonFinal
@@ -30,19 +34,12 @@ public class CreateDepositCommand {
     private final TransactionRepository transactionRepository;
     private final TransactionFactory transactionFactory;
     private final AccountRepository accountRepository;
+    private final FundTransactionFactory fundTransactionFactory;
 
     public Transaction execute() {
         validate();
         return transactionFactory.inTransaction(handle -> {
-            Transaction transaction = new Transaction(
-                    id,
-                    requestId,
-                    targetAccountId,
-                    TransactionStatus.IN_PROGRESS,
-                    TransactionType.DEPOSIT,
-                    depositAmount,
-                    LocalDateTime.now()
-            );
+            Transaction transaction = fundTransactionFactory.createTransaction(id, requestId, targetAccountId, IN_PROGRESS, DEPOSIT, depositAmount);
             transactionRepository.createTransaction(handle, transaction);
             return transaction;
         });

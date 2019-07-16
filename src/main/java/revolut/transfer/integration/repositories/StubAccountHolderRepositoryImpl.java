@@ -23,6 +23,22 @@ public class StubAccountHolderRepositoryImpl implements AccountHolderRepository 
     }
 
     @Override
+    public Optional<AccountHolder> getAccountHolderById(Handle handle, String accountHolderId) {
+        return handle.createQuery(
+                "SELECT id, title, first_name, last_name, email_address "
+                        + "FROM ACCOUNT_HOLDER "
+                        + "WHERE id=:accountHolderId")
+                .bind("accountHolderId", accountHolderId)
+                .map(accountHolderMapper)
+                .findFirst();
+    }
+
+    @Override
+    public Optional<AccountHolder> getAccountHolderById(String accountHolderId) {
+        return jdbiProvider.getJdbi().withHandle(handle -> getAccountHolderById(handle, accountHolderId));
+    }
+
+    @Override
     public String createAccountHolder(Handle handle, CreateAccountHolderCommand accountHolder) {
         handle.createUpdate("INSERT INTO ACCOUNT_HOLDER (id, title, first_name, last_name, email_address)"
                 + "VALUES (:id, :title, :firstName, :lastName, :emailAddress)")
@@ -33,17 +49,6 @@ public class StubAccountHolderRepositoryImpl implements AccountHolderRepository 
                 .bind("emailAddress", accountHolder.getEmailAddress())
                 .execute();
         return accountHolder.getId();
-    }
-
-    @Override
-    public Optional<AccountHolder> getAccountHolderById(String accountHolderId) {
-        return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
-                "SELECT id, title, first_name, last_name, email_address "
-                        + "FROM ACCOUNT_HOLDER "
-                        + "WHERE id=:accountHolderId")
-                .bind("accountHolderId", accountHolderId)
-                .map(accountHolderMapper)
-                .findFirst());
     }
 
 }

@@ -10,5 +10,6 @@ public interface AccountHolderRepository {
 
     String createAccountHolder(Handle handle, CreateAccountHolderCommand accountHolder);
     Optional<AccountHolder> getAccountHolderById(String accountHolderId);
+    Optional<AccountHolder> getAccountHolderById(Handle handle, String accountHolderId);
 
 }

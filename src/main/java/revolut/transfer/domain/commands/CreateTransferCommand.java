@@ -42,9 +42,9 @@ public class CreateTransferCommand {
         validate();
         return transactionFactory.inTransaction(handle -> {
             validateTransaction(handle);
-            Account sourceAccount = getSourceAccountForTransfer(handle);
             Account targetAccount = getTargetAccountForTransfer(handle);
-            MonetaryAmount valueForTargetAccount= getCurrentValueForTargetAccount(sourceAccount, targetAccount);
+
+            MonetaryAmount valueForTargetAccount= getCurrentValueForTargetAccount(targetAccount);
             Transaction withdrawTransaction = fundTransactionFactory.createTransaction(id, requestId, sourceAccountId, IN_PROGRESS, OUTBOUND_PAYMENT, transferAmount);
             transactionRepository.createTransaction(handle, withdrawTransaction);
 
@@ -86,18 +86,18 @@ public class CreateTransferCommand {
     }
 
     private void validateTransaction(Handle handle) {
-        if (transactionRepository.getTransactionByRequestId(requestId).isPresent()) {
+        if (transactionRepository.getTransactionByRequestId(handle, requestId).isPresent()) {
             throw new ValidationException(new ValidationFailure("Transaction with given request id already processed"));
         }
     }
 
     private Account getSourceAccountForTransfer(Handle handle) {
-        return accountRepository.getAccountByHolderIdAndAccountId(accountHolderId, sourceAccountId)
+        return accountRepository.getAccountByHolderIdAndAccountId(handle, accountHolderId, sourceAccountId)
                 .orElseThrow(() -> new ValidationException(new ValidationFailure("Source account id does not exist")));
     }
 
     private Account getTargetAccountForTransfer(Handle handle) {
-        Account targetAccount = accountRepository.getAccountByAccountId(targetAccountId)
+        Account targetAccount = accountRepository.getAccountByAccountId(handle, targetAccountId)
                 .orElseThrow(() -> new ValidationException(new ValidationFailure("Target account id does not exist")));
 
         if (targetAccount.getAccountHolderId().equals(accountHolderId)) {
@@ -106,7 +106,7 @@ public class CreateTransferCommand {
         return targetAccount;
     }
 
-    private MonetaryAmount getCurrentValueForTargetAccount(Account sourceAccount, Account targetAccount) {
+    private MonetaryAmount getCurrentValueForTargetAccount(Account targetAccount) {
         if (!transferAmount.getCurrencyType().equals(targetAccount.getCurrencyType())) {
             return currencyExchangeService.exchange(transferAmount, targetAccount.getCurrencyType());
         }

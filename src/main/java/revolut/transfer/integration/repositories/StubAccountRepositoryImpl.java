@@ -37,41 +37,52 @@ public class StubAccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public void updateAccount(Handle handle, Account updatedAccount) {
-
-    }
-
-    @Override
-    public List<Account> getAllAccountsByHolderId(String accountHolderId) {
-        return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
+    public List<Account> getAllAccountsByHolderId(Handle handle, String accountHolderId) {
+        return handle.createQuery(
                 "SELECT id, account_holder_id, account_type, currency_type "
                         + "FROM ACCOUNT "
                         + "WHERE account_holder_id=:accountHolderId")
                 .bind("accountHolderId", accountHolderId)
                 .map(accountMapper)
-                .list());
+                .list();
+    }
+
+
+    @Override
+    public List<Account> getAllAccountsByHolderId(String accountHolderId) {
+        return jdbiProvider.getJdbi().withHandle(handle -> getAllAccountsByHolderId(handle, accountHolderId));
     }
 
     @Override
-    public Optional<Account> getAccountByAccountId(String accountId) {
-        return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
+    public Optional<Account> getAccountByAccountId(Handle handle, String accountId) {
+        return handle.createQuery(
                 "SELECT id, account_holder_id, account_type, currency_type "
                         + "FROM ACCOUNT "
                         + "WHERE id=:accountId")
                 .bind("accountId", accountId)
                 .map(accountMapper)
-                .findFirst());
+                .findFirst();
     }
 
     @Override
-    public Optional<Account> getAccountByHolderIdAndAccountId(String accountHolderId, String accountId) {
-        return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
+    public Optional<Account> getAccountByAccountId(String accountId) {
+        return jdbiProvider.getJdbi().withHandle(handle -> getAccountByAccountId(handle, accountId));
+    }
+
+    @Override
+    public Optional<Account> getAccountByHolderIdAndAccountId(Handle handle, String accountHolderId, String accountId) {
+        return handle.createQuery(
                 "SELECT id, account_holder_id, account_type, currency_type "
                         + "FROM ACCOUNT "
                         + "WHERE id=:accountId AND account_holder_id=:accountHolderId")
                 .bind("accountId", accountId)
                 .bind("accountHolderId", accountHolderId)
                 .map(accountMapper)
-                .findFirst());
+                .findFirst();
+    }
+
+    @Override
+    public Optional<Account> getAccountByHolderIdAndAccountId(String accountHolderId, String accountId) {
+        return jdbiProvider.getJdbi().withHandle(handle -> getAccountByHolderIdAndAccountId(handle, accountHolderId, accountId));
     }
 }
