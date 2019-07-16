@@ -1,6 +1,7 @@
 package revolut.transfer.integration.repositories;
 
 import com.google.common.collect.Lists;
+import org.jdbi.v3.core.Handle;
 import revolut.transfer.domain.commands.CreateAccountHolderCommand;
 import revolut.transfer.domain.models.accounts.AccountHolder;
 import revolut.transfer.domain.repositories.AccountHolderRepository;
@@ -22,17 +23,15 @@ public class StubAccountHolderRepositoryImpl implements AccountHolderRepository 
     }
 
     @Override
-    public String createAccountHolder(CreateAccountHolderCommand accountHolder) {
-        jdbiProvider.getJdbi().useHandle(handle -> {
-            handle.createUpdate("INSERT INTO ACCOUNT_HOLDER (id, title, first_name, last_name, email_address)"
-                    + "VALUES (:id, :title, :firstName, :lastName, :emailAddress)")
-                    .bind("id", accountHolder.getId())
-                    .bind("title", accountHolder.getTitle())
-                    .bind("firstName", accountHolder.getFirstName())
-                    .bind("lastName", accountHolder.getLastName())
-                    .bind("emailAddress", accountHolder.getEmailAddress())
-                    .execute();
-        });
+    public String createAccountHolder(Handle handle, CreateAccountHolderCommand accountHolder) {
+        handle.createUpdate("INSERT INTO ACCOUNT_HOLDER (id, title, first_name, last_name, email_address)"
+                + "VALUES (:id, :title, :firstName, :lastName, :emailAddress)")
+                .bind("id", accountHolder.getId())
+                .bind("title", accountHolder.getTitle())
+                .bind("firstName", accountHolder.getFirstName())
+                .bind("lastName", accountHolder.getLastName())
+                .bind("emailAddress", accountHolder.getEmailAddress())
+                .execute();
         return accountHolder.getId();
     }
 

@@ -7,10 +7,12 @@ import dagger.Provides;
 import revolut.transfer.domain.repositories.AccountHolderRepository;
 import revolut.transfer.domain.repositories.AccountRepository;
 import revolut.transfer.domain.repositories.BankDetailsRepository;
+import revolut.transfer.domain.repositories.TransactionFactory;
 import revolut.transfer.domain.service.BankAccountFactory;
 import revolut.transfer.domain.service.StubBankAccountFactoryImpl;
 import revolut.transfer.integration.adapters.JsonTransformer;
 import revolut.transfer.integration.repositories.BankDetailsRepositoryImpl;
+import revolut.transfer.integration.repositories.JDBIProvider;
 import revolut.transfer.integration.repositories.StubAccountHolderRepositoryImpl;
 import revolut.transfer.integration.repositories.StubAccountRepositoryImpl;
 import spark.ResponseTransformer;
@@ -70,6 +72,11 @@ public class CommonModule {
     @Provides @Named("database.password")
     public String databasePassword() {
         return resourceBundle.getString("database.password");
+    }
+
+    @Provides
+    public TransactionFactory transactionFactory(JDBIProvider impl) {
+        return impl;
     }
 
 }

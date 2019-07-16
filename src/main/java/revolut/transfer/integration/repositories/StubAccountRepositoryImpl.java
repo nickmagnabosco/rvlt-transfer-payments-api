@@ -1,5 +1,6 @@
 package revolut.transfer.integration.repositories;
 
+import org.jdbi.v3.core.Handle;
 import revolut.transfer.domain.exceptions.ResourceNotFoundException;
 import revolut.transfer.domain.models.accounts.Account;
 import revolut.transfer.domain.repositories.AccountRepository;
@@ -23,23 +24,20 @@ public class StubAccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public String createAccount(Account account) {
-
-        jdbiProvider.getJdbi().useHandle(handle -> {
-            handle.createUpdate("INSERT INTO ACCOUNT (id, account_holder_id, account_type, currency_type) "
-                    + "VALUES (:id, :accountHolderId, :accountType, :currencyType)")
-                    .bind("id", account.getId())
-                    .bind("accountHolderId", account.getAccountHolderId())
-                    .bind("accountType", account.getAccountType())
-                    .bind("currencyType", account.getCurrencyType())
-                    .execute();
-        });
-
+    public String createAccount(Handle handle, Account account) {
+        handle.createUpdate("INSERT INTO ACCOUNT (id, account_holder_id, account_type, currency_type) "
+                + "VALUES (:id, :accountHolderId, :accountType, :currencyType)")
+                .bind("id", account.getId())
+                .bind("accountHolderId", account.getAccountHolderId())
+                .bind("accountType", account.getAccountType())
+                .bind("currencyType", account.getCurrencyType())
+                .execute();
         return account.getId();
     }
 
     @Override
-    public void updateAccount(Account updatedAccount) {
+    public void updateAccount(Handle handle, Account updatedAccount) {
+
     }
 
     @Override

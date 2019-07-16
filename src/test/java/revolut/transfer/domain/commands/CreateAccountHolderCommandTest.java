@@ -1,5 +1,7 @@
 package revolut.transfer.domain.commands;
 
+import org.jdbi.v3.core.Handle;
+import org.jdbi.v3.core.HandleConsumer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -8,6 +10,7 @@ import revolut.transfer.domain.exceptions.ValidationException;
 import revolut.transfer.domain.models.accounts.*;
 import revolut.transfer.domain.repositories.AccountHolderRepository;
 import revolut.transfer.domain.repositories.AccountRepository;
+import revolut.transfer.domain.repositories.TransactionFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -21,6 +24,9 @@ public class CreateAccountHolderCommandTest {
     @Mock
     private AccountRepository accountRepository;
 
+    @Mock
+    private TransactionFactory transactionFactory;
+
     @Test
     public void validate_withValidCommand_validatesCorrectly() {
         CreateAccountHolderCommand subject = new CreateAccountHolderCommand(
@@ -30,7 +36,8 @@ public class CreateAccountHolderCommandTest {
                 "Doe",
                 "email@address.com",
                 accountHolderRepository,
-                accountRepository
+                accountRepository,
+                transactionFactory
         );
 
         subject.validate();
@@ -45,7 +52,8 @@ public class CreateAccountHolderCommandTest {
                 "Doe",
                 "email@address.com",
                 accountHolderRepository,
-                accountRepository
+                accountRepository,
+                transactionFactory
         );
 
         subject.validate();
@@ -60,7 +68,8 @@ public class CreateAccountHolderCommandTest {
                 "Doe",
                 "email@address.com",
                 accountHolderRepository,
-                accountRepository
+                accountRepository,
+                transactionFactory
         );
 
         subject.validate();
@@ -75,7 +84,8 @@ public class CreateAccountHolderCommandTest {
                 null,
                 "email@address.com",
                 accountHolderRepository,
-                accountRepository
+                accountRepository,
+                transactionFactory
         );
 
         subject.validate();
@@ -90,7 +100,8 @@ public class CreateAccountHolderCommandTest {
                 "",
                 "email@address.com",
                 accountHolderRepository,
-                accountRepository
+                accountRepository,
+                transactionFactory
         );
 
         subject.validate();
@@ -105,7 +116,8 @@ public class CreateAccountHolderCommandTest {
                 "Doe",
                 null,
                 accountHolderRepository,
-                accountRepository
+                accountRepository,
+                transactionFactory
         );
 
         subject.validate();
@@ -120,7 +132,8 @@ public class CreateAccountHolderCommandTest {
                 "Doe",
                 "",
                 accountHolderRepository,
-                accountRepository
+                accountRepository,
+                transactionFactory
         );
 
         subject.validate();
@@ -135,7 +148,8 @@ public class CreateAccountHolderCommandTest {
                 "Doe",
                 "email@address.com",
                 accountHolderRepository,
-                accountRepository
+                accountRepository,
+                transactionFactory
         );
 
         subject.execute();
@@ -150,7 +164,8 @@ public class CreateAccountHolderCommandTest {
                 "",
                 "email@address.com",
                 accountHolderRepository,
-                accountRepository
+                accountRepository,
+                transactionFactory
         );
 
         subject.execute();
@@ -165,7 +180,8 @@ public class CreateAccountHolderCommandTest {
                 "Doe",
                 "",
                 accountHolderRepository,
-                accountRepository
+                accountRepository,
+                transactionFactory
         );
 
         subject.execute();
@@ -173,6 +189,13 @@ public class CreateAccountHolderCommandTest {
 
     @Test
     public void execute_createAccountHolder_viaAccountHolderRepository() {
+        Handle handle = mock(Handle.class);
+        doAnswer(i -> {
+            HandleConsumer<Exception> callback= (HandleConsumer<Exception>)i.getArguments()[0];
+            callback.useHandle(handle);
+            return null;
+        }).when(handle).useTransaction(any());
+        when(transactionFactory.openHandle()).thenReturn(handle);
         CreateAccountHolderCommand subject = new CreateAccountHolderCommand(
                 "id123",
                 UserTitle.MR,
@@ -180,19 +203,28 @@ public class CreateAccountHolderCommandTest {
                 "Doe",
                 "email@address.com",
                 accountHolderRepository,
-                accountRepository
+                accountRepository,
+                transactionFactory
         );
 
         subject.execute();
-        verify(accountHolderRepository).createAccountHolder(subject);
+        verify(accountHolderRepository).createAccountHolder(any(), eq(subject));
     }
 
     @Test
     public void execute_returnsAccountHolder() {
         Account account = mock(Account.class);
         AccountHolder createAccountHolder = mock(AccountHolder.class);
-        when(accountRepository.createAccount(any())).thenReturn("createAcc");
-        when(accountHolderRepository.createAccountHolder(any())).thenReturn("");
+        Handle handle = mock(Handle.class);
+        doAnswer(i -> {
+            HandleConsumer<Exception> callback= (HandleConsumer<Exception>)i.getArguments()[0];
+            callback.useHandle(handle);
+            return null;
+        }).when(handle).useTransaction(any());
+        when(transactionFactory.openHandle()).thenReturn(handle);
+
+        when(accountRepository.createAccount(any(), any())).thenReturn("createAcc");
+        when(accountHolderRepository.createAccountHolder(any(), any())).thenReturn("");
         CreateAccountHolderCommand subject = new CreateAccountHolderCommand(
                 "id123",
                 UserTitle.MR,
@@ -200,7 +232,8 @@ public class CreateAccountHolderCommandTest {
                 "Doe",
                 "email@address.com",
                 accountHolderRepository,
-                accountRepository
+                accountRepository,
+                transactionFactory
         );
 
         AccountHolder accountHolder = subject.execute();

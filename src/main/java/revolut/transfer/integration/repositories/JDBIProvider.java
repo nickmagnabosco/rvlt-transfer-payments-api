@@ -1,12 +1,14 @@
 package revolut.transfer.integration.repositories;
 
+import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
+import revolut.transfer.domain.repositories.TransactionFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class JDBIProvider {
+public class JDBIProvider implements TransactionFactory {
     private final Jdbi jdbi;
 
     @Inject
@@ -17,4 +19,10 @@ public class JDBIProvider {
     public Jdbi getJdbi() {
         return jdbi;
     }
+
+    @Override
+    public Handle openHandle() {
+        return jdbi.open();
+    }
+
 }

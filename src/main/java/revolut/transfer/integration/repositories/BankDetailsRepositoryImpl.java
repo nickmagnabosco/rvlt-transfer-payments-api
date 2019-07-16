@@ -1,5 +1,6 @@
 package revolut.transfer.integration.repositories;
 
+import org.jdbi.v3.core.Handle;
 import revolut.transfer.domain.models.accounts.BankAccountDetails;
 import revolut.transfer.domain.repositories.BankDetailsRepository;
 import revolut.transfer.integration.mappers.BankDetailsMapper;
@@ -19,17 +20,16 @@ public class BankDetailsRepositoryImpl implements BankDetailsRepository {
     }
 
     @Override
-    public String createBankDetails(String accountId, BankAccountDetails bankAccountDetails) {
-        jdbiProvider.getJdbi().useHandle(handle -> handle.createUpdate("INSERT INTO BANK_DETAILS (id, account_id, iban, bic, sort_code, account_number) "
-                    + "VALUES (:id, :accountId, :iban, :bic, :sortCode, :accountNumber)")
-                    .bind("id", bankAccountDetails.getId())
-                    .bind("accountId", accountId)
-                    .bind("iban", bankAccountDetails.getIban())
-                    .bind("bic", bankAccountDetails.getBic())
-                    .bind("sortCode", bankAccountDetails.getSortCode())
-                    .bind("accountNumber", bankAccountDetails.getAccountNumber())
-                    .execute()
-        );
+    public String createBankDetails(Handle handle, String accountId, BankAccountDetails bankAccountDetails) {
+        handle.createUpdate("INSERT INTO BANK_DETAILS (id, account_id, iban, bic, sort_code, account_number) "
+                + "VALUES (:id, :accountId, :iban, :bic, :sortCode, :accountNumber)")
+                .bind("id", bankAccountDetails.getId())
+                .bind("accountId", accountId)
+                .bind("iban", bankAccountDetails.getIban())
+                .bind("bic", bankAccountDetails.getBic())
+                .bind("sortCode", bankAccountDetails.getSortCode())
+                .bind("accountNumber", bankAccountDetails.getAccountNumber())
+                .execute();
         return bankAccountDetails.getId();
     }
 

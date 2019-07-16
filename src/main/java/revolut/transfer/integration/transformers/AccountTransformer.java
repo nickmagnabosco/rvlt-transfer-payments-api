@@ -6,6 +6,7 @@ import revolut.transfer.domain.models.accounts.*;
 import revolut.transfer.domain.repositories.AccountHolderRepository;
 import revolut.transfer.domain.repositories.AccountRepository;
 import revolut.transfer.domain.repositories.BankDetailsRepository;
+import revolut.transfer.domain.repositories.TransactionFactory;
 import revolut.transfer.domain.service.BankAccountFactory;
 import revolut.transfer.integration.dto.AccountHolderDetails;
 import revolut.transfer.integration.dto.BankAccountDetails;
@@ -25,15 +26,18 @@ public class AccountTransformer {
     private final AccountFactory accountFactory;
     private final BankAccountFactory bankAccountFactory;
     private final BankDetailsRepository bankDetailsRepository;
+    private final TransactionFactory transactionFactory;
 
     @Inject
     public AccountTransformer(AccountHolderRepository accountHolderRepository, AccountRepository accountRepository,
-            AccountFactory accountFactory, BankAccountFactory bankAccountFactory, BankDetailsRepository bankDetailsRepository) {
+            AccountFactory accountFactory, BankAccountFactory bankAccountFactory, BankDetailsRepository bankDetailsRepository,
+            TransactionFactory transactionFactory) {
         this.accountHolderRepository = accountHolderRepository;
         this.accountRepository = accountRepository;
         this.accountFactory = accountFactory;
         this.bankAccountFactory = bankAccountFactory;
         this.bankDetailsRepository = bankDetailsRepository;
+        this.transactionFactory = transactionFactory;
     }
 
     public CreateAccountHolderCommand transform(CreateAccountHolder createAccountHolder) {
@@ -44,7 +48,8 @@ public class AccountTransformer {
                 createAccountHolder.getLastName(),
                 createAccountHolder.getEmailAddress(),
                 accountHolderRepository,
-                accountRepository
+                accountRepository,
+                transactionFactory
         );
     }
 
@@ -78,6 +83,7 @@ public class AccountTransformer {
                 accountRepository,
                 accountFactory,
                 bankDetailsRepository,
-                bankAccountFactory);
+                bankAccountFactory,
+                transactionFactory);
     }
 }

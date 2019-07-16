@@ -8,6 +8,7 @@ import revolut.transfer.domain.exceptions.ValidationFailure;
 import revolut.transfer.domain.models.accounts.*;
 import revolut.transfer.domain.repositories.AccountHolderRepository;
 import revolut.transfer.domain.repositories.AccountRepository;
+import revolut.transfer.domain.repositories.TransactionFactory;
 import spark.utils.StringUtils;
 
 import java.util.List;
@@ -22,10 +23,14 @@ public class CreateAccountHolderCommand {
     private final String emailAddress;
     private final AccountHolderRepository accountHolderRepository;
     private final AccountRepository accountRepository;
+    private final TransactionFactory transactionFactory;
 
     public AccountHolder execute() {
         validate();
-        accountHolderRepository.createAccountHolder(this);
+        transactionFactory.openHandle().useTransaction(handle -> {
+            accountHolderRepository.createAccountHolder(handle,this);
+            handle.commit();
+        });
         return this.toAccountHolder();
     }
 

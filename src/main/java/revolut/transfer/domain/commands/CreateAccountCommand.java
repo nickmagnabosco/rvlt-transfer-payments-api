@@ -10,6 +10,7 @@ import revolut.transfer.domain.models.accounts.AccountType;
 import revolut.transfer.domain.models.accounts.BankAccountDetails;
 import revolut.transfer.domain.repositories.AccountRepository;
 import revolut.transfer.domain.repositories.BankDetailsRepository;
+import revolut.transfer.domain.repositories.TransactionFactory;
 import revolut.transfer.domain.service.BankAccountFactory;
 
 @Value
@@ -23,13 +24,17 @@ public class CreateAccountCommand {
     private final AccountFactory accountFactory;
     private final BankDetailsRepository bankDetailsRepository;
     private final BankAccountFactory bankAccountFactory;
+    private final TransactionFactory transactionFactory;
 
     public Account execute() {
         validate();
         BankAccountDetails bankAccountDetails = bankAccountFactory.createBankAccountDetails(id, accountType);
         Account account = accountFactory.createAccount(id, accountHolderId, accountType, bankAccountDetails);
-        accountRepository.createAccount(account);
-        bankDetailsRepository.createBankDetails(id, bankAccountDetails);
+        transactionFactory.openHandle().useTransaction(h -> {
+            accountRepository.createAccount(h, account);
+            bankDetailsRepository.createBankDetails(h, id, bankAccountDetails);
+            h.commit();
+        });
 
         return account;
     }
