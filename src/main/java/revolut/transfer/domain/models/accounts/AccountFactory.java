@@ -1,8 +1,6 @@
 package revolut.transfer.domain.models.accounts;
 
 import revolut.transfer.domain.models.currency.CurrencyType;
-import revolut.transfer.domain.service.BankAccountService;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.UUID;
@@ -10,21 +8,20 @@ import java.util.UUID;
 @Singleton
 public class AccountFactory {
 
-    private final BankAccountService bankDetailsService;
-
     @Inject
-    public AccountFactory(BankAccountService bankDetailsService) {
-        this.bankDetailsService = bankDetailsService;
+    public AccountFactory() {
+
     }
 
-    public Account createAccount(String accountHolderId, AccountType accountType) {
+    public Account createAccount(String id, String accountHolderId, AccountType accountType, BankAccountDetails bankAccountDetails) {
         CurrencyType accountCurrency = accountType.getAccountCurrency();
         return new Account(
-                UUID.randomUUID().toString(),
+                id,
                 accountHolderId,
                 accountType,
-                bankDetailsService.createBankAccountDetails(accountType),
+                bankAccountDetails,
                 accountCurrency,
+                accountType.getInitialAmount(),
                 accountType.getInitialAmount());
     }
 

@@ -36,13 +36,5 @@ public class AccountHolderAdapter extends Adapter {
         post("/accountHolders/:holderId/accounts", (req, response) ->
                 accountService.createAccount(req.params("holderId"), objectMapper.readValue(req.body(), CreateAccountCommand.class)),
                 jsonTransformer);
-
-        get("/accountHolders/:holderId/transfers/:transferId", (req, response) -> {
-            return "";
-        });
-
-        get("/accountHolders/:holderId/transfers", (req, response) -> {
-            return "";
-        });
     }
 }

@@ -20,15 +20,13 @@ public class CreateAccountHolderCommand {
     private final String firstName;
     private final String lastName;
     private final String emailAddress;
-    private final AccountType defaultAccountType;
     private final AccountHolderRepository accountHolderRepository;
     private final AccountRepository accountRepository;
-    private final AccountFactory accountFactory;
 
     public AccountHolder execute() {
         validate();
-        accountRepository.createAccount(accountFactory.createAccount(id, defaultAccountType));
-        return accountHolderRepository.createAccountHolder(this);
+        accountHolderRepository.createAccountHolder(this);
+        return this.toAccountHolder();
     }
 
     public void validate() {

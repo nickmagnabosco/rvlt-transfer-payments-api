@@ -9,7 +9,10 @@ import revolut.transfer.domain.exceptions.ValidationException;
 import revolut.transfer.domain.models.accounts.Account;
 import revolut.transfer.domain.models.accounts.AccountFactory;
 import revolut.transfer.domain.models.accounts.AccountType;
+import revolut.transfer.domain.models.accounts.BankAccountDetails;
 import revolut.transfer.domain.repositories.AccountRepository;
+import revolut.transfer.domain.repositories.BankDetailsRepository;
+import revolut.transfer.domain.service.BankAccountFactory;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -22,6 +25,12 @@ public class CreateAccountCommandTest {
     @Mock
     private AccountFactory accountFactory;
 
+    @Mock
+    private BankDetailsRepository bankDetailsRepository;
+
+    @Mock
+    private BankAccountFactory bankAccountFactory;
+
     @Test(expected = ValidationException.class)
     public void validate_validatesViaAccountRepository() {
         Account account = mock(Account.class);
@@ -29,10 +38,13 @@ public class CreateAccountCommandTest {
         when(accountRepository.getAllAccountsByHolderId("holder123")).thenReturn(Lists.newArrayList(account));
 
         CreateAccountCommand subject = new CreateAccountCommand(
+                "account123",
                 "holder123",
                 AccountType.IBAN,
                 accountRepository,
-                accountFactory
+                accountFactory,
+                bankDetailsRepository,
+                bankAccountFactory
         );
 
         subject.validate();
@@ -47,10 +59,13 @@ public class CreateAccountCommandTest {
         when(accountRepository.getAllAccountsByHolderId("holder123")).thenReturn(Lists.newArrayList(account));
 
         CreateAccountCommand subject = new CreateAccountCommand(
+                "account123",
                 "holder123",
                 AccountType.IBAN,
                 accountRepository,
-                accountFactory
+                accountFactory,
+                bankDetailsRepository,
+                bankAccountFactory
         );
 
         subject.validate();
@@ -63,10 +78,13 @@ public class CreateAccountCommandTest {
         when(accountRepository.getAllAccountsByHolderId("holder123")).thenReturn(Lists.newArrayList(account));
 
         CreateAccountCommand subject = new CreateAccountCommand(
+                "account123",
                 "holder123",
                 AccountType.IBAN,
                 accountRepository,
-                accountFactory
+                accountFactory,
+                bankDetailsRepository,
+                bankAccountFactory
         );
 
         subject.validate();
@@ -79,10 +97,13 @@ public class CreateAccountCommandTest {
         when(accountRepository.getAllAccountsByHolderId("holder123")).thenReturn(Lists.newArrayList(account));
 
         CreateAccountCommand subject = new CreateAccountCommand(
+                "account123",
                 "holder123",
                 AccountType.UK,
                 accountRepository,
-                accountFactory
+                accountFactory,
+                bankDetailsRepository,
+                bankAccountFactory
         );
 
         subject.execute();
@@ -92,33 +113,44 @@ public class CreateAccountCommandTest {
     public void execute_createsAccountViaAccountFactory() {
         Account account = mock(Account.class);
         when(account.getAccountType()).thenReturn(AccountType.UK);
+        BankAccountDetails bankAccountDetails = mock(BankAccountDetails.class);
+
         when(accountRepository.getAllAccountsByHolderId("holder123")).thenReturn(Lists.newArrayList(account));
+        when(bankAccountFactory.createBankAccountDetails("account123", AccountType.IBAN)).thenReturn(bankAccountDetails);
 
         CreateAccountCommand subject = new CreateAccountCommand(
+                "account123",
                 "holder123",
                 AccountType.IBAN,
                 accountRepository,
-                accountFactory
+                accountFactory,
+                bankDetailsRepository,
+                bankAccountFactory
         );
 
         subject.execute();
-        verify(accountFactory).createAccount("holder123", AccountType.IBAN);
+        verify(accountFactory).createAccount("account123", "holder123", AccountType.IBAN, bankAccountDetails);
     }
 
     @Test
     public void execute_createsAccountViaAccountAccountRepository() {
         Account account = mock(Account.class);
         Account newAccount = mock(Account.class);
+        BankAccountDetails bankAccountDetails = mock(BankAccountDetails.class);
 
         when(account.getAccountType()).thenReturn(AccountType.UK);
         when(accountRepository.getAllAccountsByHolderId("holder123")).thenReturn(Lists.newArrayList(account));
-        when(accountFactory.createAccount("holder123", AccountType.IBAN)).thenReturn(newAccount);
+        when(bankAccountFactory.createBankAccountDetails("account123", AccountType.IBAN)).thenReturn(bankAccountDetails);
+        when(accountFactory.createAccount("account123","holder123", AccountType.IBAN, bankAccountDetails)).thenReturn(newAccount);
 
         CreateAccountCommand subject = new CreateAccountCommand(
+                "account123",
                 "holder123",
                 AccountType.IBAN,
                 accountRepository,
-                accountFactory
+                accountFactory,
+                bankDetailsRepository,
+                bankAccountFactory
         );
 
         subject.execute();
@@ -129,16 +161,21 @@ public class CreateAccountCommandTest {
     public void execute_returnCreatedAccount() {
         Account account = mock(Account.class);
         Account newAccount = mock(Account.class);
+        BankAccountDetails bankAccountDetails = mock(BankAccountDetails.class);
 
         when(account.getAccountType()).thenReturn(AccountType.UK);
         when(accountRepository.getAllAccountsByHolderId("holder123")).thenReturn(Lists.newArrayList(account));
-        when(accountFactory.createAccount("holder123", AccountType.IBAN)).thenReturn(newAccount);
+        when(bankAccountFactory.createBankAccountDetails("account123", AccountType.IBAN)).thenReturn(bankAccountDetails);
+        when(accountFactory.createAccount("account123","holder123", AccountType.IBAN, bankAccountDetails)).thenReturn(newAccount);
 
         CreateAccountCommand subject = new CreateAccountCommand(
+                "account123",
                 "holder123",
                 AccountType.IBAN,
                 accountRepository,
-                accountFactory
+                accountFactory,
+                bankDetailsRepository,
+                bankAccountFactory
         );
 
         Account result = subject.execute();

@@ -2,6 +2,7 @@ package revolut.transfer.domain.service;
 
 import revolut.transfer.domain.commands.CreateAccountCommand;
 import revolut.transfer.domain.commands.CreateAccountHolderCommand;
+import revolut.transfer.domain.exceptions.ResourceNotFoundException;
 import revolut.transfer.domain.models.accounts.Account;
 import revolut.transfer.domain.models.accounts.AccountHolder;
 import revolut.transfer.domain.repositories.AccountHolderRepository;
@@ -24,7 +25,7 @@ public class AccountService {
     }
 
     public AccountHolder getAccountHolderById(String accountHolderId) {
-        return accountHolderRepository.getAccountHolderById(accountHolderId);
+        return accountHolderRepository.getAccountHolderById(accountHolderId).orElseThrow(ResourceNotFoundException::new);
     }
 
     public AccountHolder createAccountHolder(CreateAccountHolderCommand createAccountHolderCommand) {
@@ -36,7 +37,8 @@ public class AccountService {
     }
 
     public Account getAccountByHolderIdAndAccountId(String accountHolderId, String accountId) {
-        return accountRepository.getAllAccountsByHolderIdAndAccountId(accountHolderId, accountId);
+        return accountRepository.getAccountByHolderIdAndAccountId(accountHolderId, accountId)
+                .orElseThrow(ResourceNotFoundException::new);
     }
 
     public Account createAccount(CreateAccountCommand createAccountCommand) {

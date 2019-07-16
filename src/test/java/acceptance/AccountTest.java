@@ -64,6 +64,13 @@ public class AccountTest extends ComponentTest {
                 .when()
                 .post(getFullUrl("/accountHolders/" + accountHolderDetails.getId() + "/accounts"))
                 .then()
+                .statusCode(200);
+
+        given()
+                .body(createAccountCommand)
+                .when()
+                .post(getFullUrl("/accountHolders/" + accountHolderDetails.getId() + "/accounts"))
+                .then()
                 .statusCode(400);
     }
 
@@ -95,10 +102,20 @@ public class AccountTest extends ComponentTest {
                 "myemail@address.com",
                 "UK"));
 
-        Account firstAccount = accountHolderDetails.getAccounts().get(0);
-        CreateAccountCommand createAccountCommand = new CreateAccountCommand("IBAN");
-        Account secondAccount = given()
+        CreateAccountCommand createAccountCommand = new CreateAccountCommand("UK");
+        Account firstAccount = given()
                 .body(createAccountCommand)
+                .when()
+                .post(getFullUrl("/accountHolders/" + accountHolderDetails.getId() + "/accounts"))
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .as(Account.class);
+
+        CreateAccountCommand createAccountCommand2 = new CreateAccountCommand("IBAN");
+        Account secondAccount = given()
+                .body(createAccountCommand2)
                 .when()
                 .post(getFullUrl("/accountHolders/" + accountHolderDetails.getId() + "/accounts"))
                 .then()
@@ -122,6 +139,28 @@ public class AccountTest extends ComponentTest {
     }
 
     @Test
+    public void getAllAccounts_forAccountHolder_whenNoAccount_returnsEmptyList() {
+        AccountHolderDetails accountHolderDetails = givenAccountHolder(new CreateAccountHolder(
+                "MR",
+                "Clint",
+                "Eastwood",
+                "myemail@address.com",
+                "UK"));
+
+        Account[] accounts = when()
+                .get(getFullUrl("/accountHolders/" + accountHolderDetails.getId() + "/accounts"))
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .as(Account[].class);
+
+        List<Account> accountList = Arrays.asList(accounts);
+        assertThat(accountList).hasSize(0);
+    }
+
+
+    @Test
     public void getAccountById() {
         AccountHolderDetails accountHolderDetails = givenAccountHolder(new CreateAccountHolder(
                 "MR",
@@ -130,17 +169,26 @@ public class AccountTest extends ComponentTest {
                 "myemail@address.com",
                 "UK"));
 
-        Account firstAccount = accountHolderDetails.getAccounts().get(0);
-
-        Account account = when()
-                .get(getFullUrl("/accountHolders/" + accountHolderDetails.getId() + "/accounts/" + firstAccount.getId()))
+        CreateAccountCommand createAccountCommand = new CreateAccountCommand("UK");
+        Account createdAccount = given()
+                .body(createAccountCommand)
+                .when()
+                .post(getFullUrl("/accountHolders/" + accountHolderDetails.getId() + "/accounts"))
                 .then()
                 .statusCode(200)
                 .extract()
                 .body()
                 .as(Account.class);
 
-        assertThat(account).isEqualTo(firstAccount);
+        Account account = when()
+                .get(getFullUrl("/accountHolders/" + accountHolderDetails.getId() + "/accounts/" + createdAccount.getId()))
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .as(Account.class);
+
+        assertThat(account).isEqualTo(createdAccount);
     }
 
     @Test

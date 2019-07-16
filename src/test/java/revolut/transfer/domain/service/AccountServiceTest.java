@@ -15,6 +15,7 @@ import revolut.transfer.domain.repositories.AccountHolderRepository;
 import revolut.transfer.domain.repositories.AccountRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -32,6 +33,9 @@ public class AccountServiceTest {
 
     @Test
     public void getAccountHolderById_getsViaAccountHolderRepository() {
+        AccountHolder accountHolder = mock(AccountHolder.class);
+        when(accountHolderRepository.getAccountHolderById("holder123")).thenReturn(Optional.of(accountHolder));
+
         subject.getAccountHolderById("holder123");
 
         verify(accountHolderRepository).getAccountHolderById("holder123");
@@ -40,7 +44,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountHolderById_returnsAccountHolder() {
         AccountHolder accountHolder = mock(AccountHolder.class);
-        when(accountHolderRepository.getAccountHolderById("holder123")).thenReturn(accountHolder);
+        when(accountHolderRepository.getAccountHolderById("holder123")).thenReturn(Optional.of(accountHolder));
 
         AccountHolder result = subject.getAccountHolderById("holder123");
         assertThat(result).isEqualTo(accountHolder);
@@ -99,13 +103,14 @@ public class AccountServiceTest {
         when(account2.getId()).thenReturn("account234");
         when(accountRepository.getAllAccountsByHolderId("holder123")).thenReturn(Lists.newArrayList(account1, account2));
 
-        Account result = subject.getAccountByHolderIdAndAccountId("holder123", "anotherAcc123");
-        assertThat(result).isNull();
+        List<Account> result = subject.getAccountsByHolderId("holder123");
+        assertThat(result).contains(account1);
+        assertThat(result).contains(account2);
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void getAccountByHolderIdAndAccountId_whenNoAccountReturnsResourceNotFoundException() {
-        doThrow(new ResourceNotFoundException()).when(accountRepository).getAllAccountsByHolderIdAndAccountId("holder123", "account123");
+        doThrow(new ResourceNotFoundException()).when(accountRepository).getAccountByHolderIdAndAccountId("holder123", "account123");
 
         subject.getAccountByHolderIdAndAccountId("holder123", "account123");
     }

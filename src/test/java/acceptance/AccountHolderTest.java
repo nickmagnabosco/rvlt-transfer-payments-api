@@ -8,7 +8,6 @@ import revolut.transfer.integration.dto.AccountHolderDetails;
 import revolut.transfer.integration.dto.BankAccountDetails;
 import revolut.transfer.integration.dto.command.CreateAccountHolder;
 import revolut.transfer.integration.repositories.StubAccountHolderRepositoryImpl;
-import revolut.transfer.integration.repositories.StubAccountRepositoryImpl;
 
 import static acceptance.TestUtility.givenAccountHolder;
 import static com.jayway.restassured.RestAssured.given;
@@ -18,7 +17,7 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 public class AccountHolderTest extends ComponentTest {
 
     @Test
-    public void createAccountHolder() throws Exception {
+    public void createAndRetrieveAccountHolder() throws Exception {
         CreateAccountHolder createAccount = new CreateAccountHolder(
                 "MR",
                 "Jim",
@@ -27,7 +26,7 @@ public class AccountHolderTest extends ComponentTest {
                 "UK"
         );
 
-        AccountHolderDetails response =
+        AccountHolderDetails createdAccount =
                 given()
                     .body(createAccount)
                 .when()
@@ -38,60 +37,27 @@ public class AccountHolderTest extends ComponentTest {
                     .body()
                     .as(AccountHolderDetails.class);
 
-        assertThat(response.getId()).isNotEmpty();
-        assertThat(response.getEmailAddress()).isEqualTo("myemail@address.com");
-        assertThat(response.getFirstName()).isEqualTo("Jim");
-        assertThat(response.getLastName()).isEqualTo("Don");
-        assertThat(response.getTitle()).isEqualTo("MR");
-        assertThat(response.getAccounts()).hasSize(1);
-        assertThat(response.getAccounts().get(0).getAccountType()).isEqualTo("UK");
+        assertThat(createdAccount.getId()).isNotEmpty();
+        assertThat(createdAccount.getEmailAddress()).isEqualTo("myemail@address.com");
+        assertThat(createdAccount.getFirstName()).isEqualTo("Jim");
+        assertThat(createdAccount.getLastName()).isEqualTo("Don");
+        assertThat(createdAccount.getTitle()).isEqualTo("MR");
+        assertThat(createdAccount.getAccounts()).hasSize(0);
 
-        assertThat(StubAccountHolderRepositoryImpl.accountHolders).hasSize(1);
-        assertThat(StubAccountHolderRepositoryImpl.accountHolders.get(0).getId()).isEqualTo(response.getId());
-    }
+        AccountHolderDetails getAccountReponse = when()
+                .get(getFullUrl("/accountHolders/" + createdAccount.getId()))
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .as(AccountHolderDetails.class);
 
-    @Test
-    public void createAccountHolder_createsDefaultAccount() throws Exception {
-        CreateAccountHolder createAccount = new CreateAccountHolder(
-                "MR",
-                "Jim",
-                "Don",
-                "myemail@address.com",
-                "UK"
-        );
-
-        AccountHolderDetails response =
-                given()
-                        .body(createAccount)
-                        .when()
-                        .post(getFullUrl( "/accountHolders"))
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .body()
-                        .as(AccountHolderDetails.class);
-
-        assertThat(response.getAccounts()).hasSize(1);
-        Account account = response.getAccounts().get(0);
-        assertThat(account.getId()).isNotEmpty();
-        assertThat(account.getAccountType()).isEqualTo("UK");
-        assertThat(account.getAccountHolderId()).isEqualTo(response.getId());
-        assertThat(account.getCurrencyType()).isEqualTo("GBP");
-        assertThat(account.getBalance()).isEqualTo(new revolut.transfer.integration.dto.MonetaryAmount(MonetaryAmount.ZERO_GBP));
-        BankAccountDetails bankAccountDetails = account.getBankAccountDetails();
-        assertThat(bankAccountDetails).isNotNull();
-        assertThat(bankAccountDetails.getAccountNumber()).isNotEmpty();
-        assertThat(bankAccountDetails.getIban()).isNotEmpty();
-        assertThat(bankAccountDetails.getSortCode()).isNotEmpty();
-        assertThat(bankAccountDetails.getBic()).isNotEmpty();
-
-        assertThat(StubAccountRepositoryImpl.accounts).hasSize(1);
-        revolut.transfer.domain.models.accounts.Account createdAccount = StubAccountRepositoryImpl.accounts.get(0);
-        assertThat(createdAccount.getId()).isEqualTo(account.getId());
-        assertThat(createdAccount.getAccountHolderId()).isEqualTo(account.getAccountHolderId());
-        assertThat(createdAccount.getAccountType().name()).isEqualTo(account.getAccountType());
-        assertThat(new revolut.transfer.integration.dto.MonetaryAmount(createdAccount.getBalance())).isEqualTo(account.getBalance());
-        assertThat(createdAccount.getBankAccountDetails()).isEqualToComparingFieldByField(account.getBankAccountDetails());
+        assertThat(getAccountReponse.getId()).isNotEmpty();
+        assertThat(getAccountReponse.getEmailAddress()).isEqualTo("myemail@address.com");
+        assertThat(getAccountReponse.getFirstName()).isEqualTo("Jim");
+        assertThat(getAccountReponse.getLastName()).isEqualTo("Don");
+        assertThat(getAccountReponse.getTitle()).isEqualTo("MR");
+        assertThat(getAccountReponse.getAccounts()).hasSize(0);
     }
 
     @Test

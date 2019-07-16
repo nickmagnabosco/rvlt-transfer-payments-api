@@ -13,11 +13,11 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 public class StubBankDetailsServiceImplTest {
 
     @InjectMocks
-    private StubBankAccountServiceImpl subject;
+    private StubBankAccountFactoryImpl subject;
 
     @Test
     public void createBankAccountDetails_UKAccountType() {
-        BankAccountDetails bankAccountDetails = subject.createBankAccountDetails(AccountType.UK);
+        BankAccountDetails bankAccountDetails = subject.createBankAccountDetails("account123", AccountType.UK);
 
         assertThat(bankAccountDetails.getAccountNumber()).isNotEmpty();
         assertThat(bankAccountDetails.getAccountNumber()).hasSize(8);

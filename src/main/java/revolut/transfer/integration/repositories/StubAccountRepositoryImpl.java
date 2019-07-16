@@ -1,51 +1,68 @@
 package revolut.transfer.integration.repositories;
 
-import com.google.common.collect.Lists;
 import revolut.transfer.domain.exceptions.ResourceNotFoundException;
 import revolut.transfer.domain.models.accounts.Account;
 import revolut.transfer.domain.repositories.AccountRepository;
+import revolut.transfer.integration.mappers.AccountMapper;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Singleton
 public class StubAccountRepositoryImpl implements AccountRepository {
-    public static List<Account> accounts = Lists.newArrayList();
+    private final JDBIProvider jdbiProvider;
+    private final AccountMapper accountMapper;
 
     @Inject
-    public StubAccountRepositoryImpl() {
+    public StubAccountRepositoryImpl(JDBIProvider jdbiProvider, AccountMapper accountMapper) {
+        this.jdbiProvider = jdbiProvider;
+        this.accountMapper = accountMapper;
     }
 
     @Override
-    public Account createAccount(Account account) {
-        accounts.add(account);
-        return account;
+    public String createAccount(Account account) {
+
+        jdbiProvider.getJdbi().useHandle(handle -> {
+            handle.createUpdate("INSERT INTO ACCOUNT (id, account_holder_id, account_type, currency_type) "
+                    + "VALUES (:id, :accountHolderId, :accountType, :currencyType)")
+                    .bind("id", account.getId())
+                    .bind("accountHolderId", account.getAccountHolderId())
+                    .bind("accountType", account.getAccountType())
+                    .bind("currencyType", account.getCurrencyType())
+                    .execute();
+        });
+
+        return account.getId();
     }
 
     @Override
-    public Account getAccountById(String accountId) {
-        return accounts.stream().filter(account -> account.getId().equals(accountId)).findFirst().orElseThrow(ResourceNotFoundException::new);
+    public void updateAccount(Account updatedAccount) {
     }
 
     @Override
     public List<Account> getAllAccountsByHolderId(String accountHolderId) {
-        return accounts.stream().filter(account -> account.getAccountHolderId().equals(accountHolderId)).collect(Collectors.toList());
+        return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
+                "SELECT id, account_holder_id, account_type, currency_type "
+                        + "FROM ACCOUNT "
+                        + "WHERE account_holder_id=:accountHolderId")
+                .bind("accountHolderId", accountHolderId)
+                .map(accountMapper)
+                .list());
     }
 
     @Override
-    public Account getAllAccountsByHolderIdAndAccountId(String accountHolderId, String accountId) {
-        return accounts.stream()
-                .filter(account ->
-                        account.getAccountHolderId().equals(accountHolderId) &&
-                        account.getId().equals(accountId))
-                .findFirst()
-                .orElseThrow(ResourceNotFoundException::new);
+    public Optional<Account> getAccountByHolderIdAndAccountId(String accountHolderId, String accountId) {
+        return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
+                "SELECT id, account_holder_id, account_type, currency_type "
+                        + "FROM ACCOUNT "
+                        + "WHERE id=:accountId AND account_holder_id=:accountHolderId")
+                .bind("accountId", accountId)
+                .bind("accountHolderId", accountHolderId)
+                .map(accountMapper)
+                .findFirst());
     }
 
-    @Override
-    public List<Account> getAllAccounts() {
-        return accounts;
-    }
 }

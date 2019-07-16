@@ -3,13 +3,13 @@ package revolut.transfer.domain.repositories;
 import revolut.transfer.domain.models.accounts.Account;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AccountRepository {
 
-    Account createAccount(Account account);
-    Account getAccountById(String accountId);
+    String createAccount(Account account);
+    void updateAccount(Account updatedAccount);
     List<Account> getAllAccountsByHolderId(String accountHolderId);
-    Account getAllAccountsByHolderIdAndAccountId(String accountHolderId, String accountId);
-    List<Account> getAllAccounts();
+    Optional<Account> getAccountByHolderIdAndAccountId(String accountHolderId, String accountId);
 
 }

@@ -16,5 +16,26 @@ public class Account {
 
     private final CurrencyType currencyType;
     private final MonetaryAmount balance;
+    private final MonetaryAmount availableBalance;
 
+    public Account depositAmount(MonetaryAmount amount) {
+        return new Account(
+                id,
+                accountHolderId,
+                accountType,
+                bankAccountDetails,
+                currencyType,
+                balance,
+                balance.add(amount));
+    }
+
+//    public Account withdrawAmount(MonetaryAmount amount) {
+//        return new Account(
+//                id,
+//                accountHolderId,
+//                accountType,
+//                bankAccountDetails,
+//                currencyType,
+//                balance.subtract(amount));
+//    }
 }

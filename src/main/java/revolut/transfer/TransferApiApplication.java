@@ -1,8 +1,8 @@
 package revolut.transfer;
 
-import spark.Service;
 import spark.Spark;
-import spark.servlet.SparkApplication;
+
+import java.util.ResourceBundle;
 
 import static spark.Spark.port;
 
@@ -15,8 +15,8 @@ public class TransferApiApplication {
     }
 
     public static void main(String[] args) {
-//        port(ResourceBundle.getBundle("configuration/local.properties").getString("application.port"));
-        port(8080);
+        String applicationPortString = ResourceBundle.getBundle("local").getString("application.port");
+        port(Integer.parseInt(applicationPortString));
         new TransferApiApplication().start();
         Spark.awaitInitialization();
     }

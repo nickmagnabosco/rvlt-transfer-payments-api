@@ -14,16 +14,16 @@ public class TransferAdapter extends Adapter {
     }
 
     public void initialize() {
-        get("/transfers", (req, response) -> {
-            return "Hello";
-        });
+        get("/accountHolders/:holderId/transfers/:transferId", (req, response) -> {
+            return "";
+        }, jsonTransformer);
 
-        get("/transfers/:transferId", (req, response) -> {
-            return req.params("transferId");
-        });
+        get("/accountHolders/:holderId/transfers", (req, response) -> {
+            return "";
+        }, jsonTransformer);
 
-        post("/transfers", (req, response) -> {
-           return null;
-        });
+        post("/accountHolders/:holderId/transfers", (req, response) -> {
+            return "";
+        }, jsonTransformer);
     }
 }

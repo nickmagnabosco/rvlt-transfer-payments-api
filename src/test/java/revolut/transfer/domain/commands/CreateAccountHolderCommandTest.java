@@ -21,9 +21,7 @@ public class CreateAccountHolderCommandTest {
     @Mock
     private AccountRepository accountRepository;
 
-    @Mock
-    private AccountFactory accountFactory;
-
+    @Test
     public void validate_withValidCommand_validatesCorrectly() {
         CreateAccountHolderCommand subject = new CreateAccountHolderCommand(
                 "id123",
@@ -31,10 +29,8 @@ public class CreateAccountHolderCommandTest {
                 "Jom",
                 "Doe",
                 "email@address.com",
-                AccountType.IBAN,
                 accountHolderRepository,
-                accountRepository,
-                accountFactory
+                accountRepository
         );
 
         subject.validate();
@@ -48,10 +44,8 @@ public class CreateAccountHolderCommandTest {
                 null,
                 "Doe",
                 "email@address.com",
-                AccountType.IBAN,
                 accountHolderRepository,
-                accountRepository,
-                accountFactory
+                accountRepository
         );
 
         subject.validate();
@@ -65,10 +59,8 @@ public class CreateAccountHolderCommandTest {
                 "",
                 "Doe",
                 "email@address.com",
-                AccountType.IBAN,
                 accountHolderRepository,
-                accountRepository,
-                accountFactory
+                accountRepository
         );
 
         subject.validate();
@@ -82,10 +74,8 @@ public class CreateAccountHolderCommandTest {
                 "Jim",
                 null,
                 "email@address.com",
-                AccountType.IBAN,
                 accountHolderRepository,
-                accountRepository,
-                accountFactory
+                accountRepository
         );
 
         subject.validate();
@@ -99,10 +89,8 @@ public class CreateAccountHolderCommandTest {
                 "Jim",
                 "",
                 "email@address.com",
-                AccountType.IBAN,
                 accountHolderRepository,
-                accountRepository,
-                accountFactory
+                accountRepository
         );
 
         subject.validate();
@@ -116,10 +104,8 @@ public class CreateAccountHolderCommandTest {
                 "Jim",
                 "Doe",
                 null,
-                AccountType.IBAN,
                 accountHolderRepository,
-                accountRepository,
-                accountFactory
+                accountRepository
         );
 
         subject.validate();
@@ -133,10 +119,8 @@ public class CreateAccountHolderCommandTest {
                 "Jim",
                 "Doe",
                 "",
-                AccountType.IBAN,
                 accountHolderRepository,
-                accountRepository,
-                accountFactory
+                accountRepository
         );
 
         subject.validate();
@@ -150,10 +134,8 @@ public class CreateAccountHolderCommandTest {
                 "",
                 "Doe",
                 "email@address.com",
-                AccountType.IBAN,
                 accountHolderRepository,
-                accountRepository,
-                accountFactory
+                accountRepository
         );
 
         subject.execute();
@@ -167,10 +149,8 @@ public class CreateAccountHolderCommandTest {
                 "Jon",
                 "",
                 "email@address.com",
-                AccountType.IBAN,
                 accountHolderRepository,
-                accountRepository,
-                accountFactory
+                accountRepository
         );
 
         subject.execute();
@@ -184,10 +164,8 @@ public class CreateAccountHolderCommandTest {
                 "Jon",
                 "Doe",
                 "",
-                AccountType.IBAN,
                 accountHolderRepository,
-                accountRepository,
-                accountFactory
+                accountRepository
         );
 
         subject.execute();
@@ -201,10 +179,8 @@ public class CreateAccountHolderCommandTest {
                 "Jon",
                 "Doe",
                 "email@address.com",
-                AccountType.IBAN,
                 accountHolderRepository,
-                accountRepository,
-                accountFactory
+                accountRepository
         );
 
         subject.execute();
@@ -212,64 +188,26 @@ public class CreateAccountHolderCommandTest {
     }
 
     @Test
-    public void execute_createsAccount_viaAccountFactory() {
-        CreateAccountHolderCommand subject = new CreateAccountHolderCommand(
-                "id123",
-                UserTitle.MR,
-                "Jon",
-                "Doe",
-                "email@address.com",
-                AccountType.IBAN,
-                accountHolderRepository,
-                accountRepository,
-                accountFactory
-        );
-
-        subject.execute();
-        verify(accountFactory).createAccount("id123", AccountType.IBAN);
-    }
-
-    @Test
-    public void execute_createInitialAccount_viaAccountRepository() {
-        Account account = mock(Account.class);
-        when(accountFactory.createAccount("id123", AccountType.IBAN)).thenReturn(account);
-        CreateAccountHolderCommand subject = new CreateAccountHolderCommand(
-                "id123",
-                UserTitle.MR,
-                "Jon",
-                "Doe",
-                "email@address.com",
-                AccountType.IBAN,
-                accountHolderRepository,
-                accountRepository,
-                accountFactory
-        );
-
-        subject.execute();
-        verify(accountRepository).createAccount(account);
-    }
-
-    @Test
     public void execute_returnsAccountHolder() {
         Account account = mock(Account.class);
-        Account createdAccount = mock(Account.class);
         AccountHolder createAccountHolder = mock(AccountHolder.class);
-        when(accountFactory.createAccount("id123", AccountType.IBAN)).thenReturn(account);
-        when(accountRepository.createAccount(any())).thenReturn(createdAccount);
-        when(accountHolderRepository.createAccountHolder(any())).thenReturn(createAccountHolder);
+        when(accountRepository.createAccount(any())).thenReturn("createAcc");
+        when(accountHolderRepository.createAccountHolder(any())).thenReturn("");
         CreateAccountHolderCommand subject = new CreateAccountHolderCommand(
                 "id123",
                 UserTitle.MR,
                 "Jon",
                 "Doe",
                 "email@address.com",
-                AccountType.IBAN,
                 accountHolderRepository,
-                accountRepository,
-                accountFactory
+                accountRepository
         );
 
         AccountHolder accountHolder = subject.execute();
-        assertThat(accountHolder).isEqualTo(createAccountHolder);
+        assertThat(accountHolder.getId()).isEqualTo("id123");
+        assertThat(accountHolder.getTitle()).isEqualTo(UserTitle.MR);
+        assertThat(accountHolder.getFirstName()).isEqualTo("Jon");
+        assertThat(accountHolder.getLastName()).isEqualTo("Doe");
+        assertThat(accountHolder.getEmailAddress()).isEqualTo("email@address.com");
     }
 }

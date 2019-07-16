@@ -24,8 +24,6 @@ public class ComponentTest {
 
     @Before
     public void clearDb() {
-        StubAccountRepositoryImpl.accounts.clear();
-        StubAccountHolderRepositoryImpl.accountHolders.clear();
     }
 
     @AfterClass

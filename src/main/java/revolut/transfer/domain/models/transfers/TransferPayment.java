@@ -12,7 +12,6 @@ public class TransferPayment {
     private final String requestId;
     private final String sourceAccountId;
     private final String targetAccountId;
-    private final String quoteId;
     private final String reference;
     private final TransferStatus status;
     private final TransferType transferType;

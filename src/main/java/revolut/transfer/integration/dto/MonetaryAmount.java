@@ -16,7 +16,7 @@ public class MonetaryAmount {
     private String currencyType;
 
     public MonetaryAmount(revolut.transfer.domain.models.MonetaryAmount monetaryAmount) {
-        amount = monetaryAmount.getAmount();
-        currencyType = monetaryAmount.getCurrencyType().name();
+        amount = monetaryAmount == null ? null : monetaryAmount.getAmount();
+        currencyType = monetaryAmount == null ? null : monetaryAmount.getCurrencyType().name();
     }
 }

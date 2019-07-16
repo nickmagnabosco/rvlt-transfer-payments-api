@@ -5,6 +5,8 @@ import revolut.transfer.domain.commands.CreateAccountHolderCommand;
 import revolut.transfer.domain.models.accounts.*;
 import revolut.transfer.domain.repositories.AccountHolderRepository;
 import revolut.transfer.domain.repositories.AccountRepository;
+import revolut.transfer.domain.repositories.BankDetailsRepository;
+import revolut.transfer.domain.service.BankAccountFactory;
 import revolut.transfer.integration.dto.AccountHolderDetails;
 import revolut.transfer.integration.dto.BankAccountDetails;
 import revolut.transfer.integration.dto.MonetaryAmount;
@@ -21,13 +23,17 @@ public class AccountTransformer {
     private final AccountHolderRepository accountHolderRepository;
     private final AccountRepository accountRepository;
     private final AccountFactory accountFactory;
+    private final BankAccountFactory bankAccountFactory;
+    private final BankDetailsRepository bankDetailsRepository;
 
     @Inject
     public AccountTransformer(AccountHolderRepository accountHolderRepository, AccountRepository accountRepository,
-            AccountFactory accountFactory) {
+            AccountFactory accountFactory, BankAccountFactory bankAccountFactory, BankDetailsRepository bankDetailsRepository) {
         this.accountHolderRepository = accountHolderRepository;
         this.accountRepository = accountRepository;
         this.accountFactory = accountFactory;
+        this.bankAccountFactory = bankAccountFactory;
+        this.bankDetailsRepository = bankDetailsRepository;
     }
 
     public CreateAccountHolderCommand transform(CreateAccountHolder createAccountHolder) {
@@ -37,10 +43,8 @@ public class AccountTransformer {
                 createAccountHolder.getFirstName(),
                 createAccountHolder.getLastName(),
                 createAccountHolder.getEmailAddress(),
-                AccountType.fromString(createAccountHolder.getDefaultAccountType()),
                 accountHolderRepository,
-                accountRepository,
-                accountFactory
+                accountRepository
         );
     }
 
@@ -68,9 +72,12 @@ public class AccountTransformer {
 
     public CreateAccountCommand transformCreateAccount(String accountHolderId, revolut.transfer.integration.dto.command.CreateAccountCommand dto) {
         return new CreateAccountCommand(
+                UUID.randomUUID().toString(),
                 accountHolderId,
                 AccountType.fromString(dto.getAccountType()),
                 accountRepository,
-                accountFactory);
+                accountFactory,
+                bankDetailsRepository,
+                bankAccountFactory);
     }
 }

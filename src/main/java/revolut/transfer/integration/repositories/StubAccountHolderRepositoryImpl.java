@@ -3,38 +3,48 @@ package revolut.transfer.integration.repositories;
 import com.google.common.collect.Lists;
 import revolut.transfer.domain.commands.CreateAccountHolderCommand;
 import revolut.transfer.domain.models.accounts.AccountHolder;
-import revolut.transfer.domain.exceptions.ResourceNotFoundException;
 import revolut.transfer.domain.repositories.AccountHolderRepository;
+import revolut.transfer.integration.mappers.AccountHolderMapper;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.List;
+import java.util.Optional;
 
 @Singleton
 public class StubAccountHolderRepositoryImpl implements AccountHolderRepository {
-    public static final List<AccountHolder> accountHolders = Lists.newArrayList();
+    private final JDBIProvider jdbiProvider;
+    private final AccountHolderMapper accountHolderMapper;
 
     @Inject
-    public StubAccountHolderRepositoryImpl() {
+    public StubAccountHolderRepositoryImpl(JDBIProvider jdbiProvider, AccountHolderMapper accountHolderMapper) {
+        this.jdbiProvider = jdbiProvider;
+        this.accountHolderMapper = accountHolderMapper;
     }
 
     @Override
-    public AccountHolder createAccountHolder(CreateAccountHolderCommand accountHolder) {
-        AccountHolder holder = accountHolder.toAccountHolder();
-        accountHolders.add(holder);
-        return holder;
+    public String createAccountHolder(CreateAccountHolderCommand accountHolder) {
+        jdbiProvider.getJdbi().useHandle(handle -> {
+            handle.createUpdate("INSERT INTO ACCOUNT_HOLDER (id, title, first_name, last_name, email_address)"
+                    + "VALUES (:id, :title, :firstName, :lastName, :emailAddress)")
+                    .bind("id", accountHolder.getId())
+                    .bind("title", accountHolder.getTitle())
+                    .bind("firstName", accountHolder.getFirstName())
+                    .bind("lastName", accountHolder.getLastName())
+                    .bind("emailAddress", accountHolder.getEmailAddress())
+                    .execute();
+        });
+        return accountHolder.getId();
     }
 
     @Override
-    public AccountHolder getAccountHolderById(String accountHolderId) {
-        return accountHolders.stream()
-                .filter(accountHolder -> accountHolder.getId().equalsIgnoreCase(accountHolderId))
-                .findFirst()
-                .orElseThrow(ResourceNotFoundException::new);
+    public Optional<AccountHolder> getAccountHolderById(String accountHolderId) {
+        return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
+                "SELECT id, title, first_name, last_name, email_address "
+                        + "FROM ACCOUNT_HOLDER "
+                        + "WHERE id=:accountHolderId")
+                .bind("accountHolderId", accountHolderId)
+                .map(accountHolderMapper)
+                .findFirst());
     }
 
-    @Override
-    public List<AccountHolder> getAllAccountHolders() {
-        return accountHolders;
-    }
 }
