@@ -2,10 +2,8 @@ package revolut.transfer.integration.repositories;
 
 import com.google.common.base.Throwables;
 import org.jdbi.v3.core.Handle;
-import org.jdbi.v3.core.HandleConsumer;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.transaction.SerializableTransactionRunner;
-import revolut.transfer.domain.exceptions.ValidationException;
 import revolut.transfer.domain.repositories.TransactionFactory;
 
 import javax.inject.Inject;

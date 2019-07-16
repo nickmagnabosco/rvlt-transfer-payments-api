@@ -1,6 +1,5 @@
 package revolut.transfer.domain.models.accounts;
 
-import com.google.common.collect.Lists;
 import lombok.*;
 import lombok.experimental.NonFinal;
 import revolut.transfer.domain.models.MonetaryAmount;

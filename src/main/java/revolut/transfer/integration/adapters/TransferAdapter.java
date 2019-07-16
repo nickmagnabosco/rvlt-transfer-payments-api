@@ -19,11 +19,11 @@ public class TransferAdapter extends Adapter {
     }
 
     public void initialize() {
-        get("/accountHolders/:holderId/transfers/:transferId", (req, response) -> {
+        get("/accountHolders/:holderId/accounts/:accountId/transfers/:transferId", (req, response) -> {
             return "";
         }, jsonTransformer);
 
-        get("/accountHolders/:holderId/transfers", (req, response) -> {
+        get("/accountHolders/:holderId/accounts/:accountId/transfers", (req, response) -> {
             return "";
         }, jsonTransformer);
 
@@ -31,7 +31,7 @@ public class TransferAdapter extends Adapter {
                 transferService.createTransfer(req.params("holderId"), req.params("accountId"), objectMapper.readValue(req.body(), CreateTransfer.class)),
                 jsonTransformer);
 
-        post("/accountHolders/:holderId/accounts/:accountId/deposit", (req, response) ->
+        post("/accountHolders/:holderId/accounts/:accountId/deposits", (req, response) ->
                 transferService.createDeposit(req.params("holderId"), req.params("accountId"), objectMapper.readValue(req.body(), CreateDeposit.class)),
                         jsonTransformer);
     }

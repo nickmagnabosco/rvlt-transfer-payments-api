@@ -7,7 +7,6 @@ import revolut.transfer.integration.dto.MonetaryAmount;
 import revolut.transfer.integration.dto.Transaction;
 import revolut.transfer.integration.dto.command.CreateAccountCommand;
 import revolut.transfer.integration.dto.command.CreateAccountHolder;
-import revolut.transfer.integration.dto.command.CreateDeposit;
 import revolut.transfer.integration.dto.command.CreateTransfer;
 
 import java.math.BigDecimal;

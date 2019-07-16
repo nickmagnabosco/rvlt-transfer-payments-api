@@ -17,7 +17,6 @@ import static spark.Spark.exception;
 @Singleton
 public class ApplicationBootstrapInitializer {
     private final TransferAdapter transferAdapter;
-    private final QuoteAdapter quoteAdapter;
     private final AccountHolderAdapter accountHolderAdapter;
     private final String databaseUrl;
     private final String databasePassword;
@@ -26,14 +25,12 @@ public class ApplicationBootstrapInitializer {
     @Inject
     public ApplicationBootstrapInitializer(
             TransferAdapter transferAdapter,
-            QuoteAdapter quoteAdapter,
             AccountHolderAdapter accountHolderAdapter,
             @Named("database.url") String databaseUrl,
             @Named("database.password") String databasePassword,
             @Named("database.user") String databaseUser)
     {
         this.transferAdapter = transferAdapter;
-        this.quoteAdapter = quoteAdapter;
         this.accountHolderAdapter = accountHolderAdapter;
         this.databasePassword = databasePassword;
         this.databaseUser = databaseUser;
@@ -41,7 +38,7 @@ public class ApplicationBootstrapInitializer {
     }
 
     public void initialize() {
-        Flyway flyway = Flyway.configure().dataSource("jdbc:h2:mem:test;INIT=create schema if not exists test;DB_CLOSE_DELAY=-1;", "sa", "").load();
+        Flyway flyway = Flyway.configure().dataSource(databaseUrl, databaseUser, databasePassword).load();
         flyway.migrate();
 
         defaultResponseTransformer(new JsonTransformer());
@@ -55,12 +52,11 @@ public class ApplicationBootstrapInitializer {
             try {
                 response.body(new ObjectMapper().writeValueAsString(e.getFailures()));
             } catch (JsonProcessingException e1) {
-                e1.printStackTrace();
+                throw new ValidationException();
             }
         }));
 
         transferAdapter.initialize();
-        quoteAdapter.initialize();
         accountHolderAdapter.initialize();
 
         awaitInitialization();

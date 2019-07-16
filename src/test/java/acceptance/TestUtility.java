@@ -58,7 +58,7 @@ public class TestUtility {
         given()
                 .body(createDeposit)
                 .when()
-                .post(getFullUrl("/accountHolders/" + accountHolderId + "/accounts/" + account.getId() + "/deposit"))
+                .post(getFullUrl("/accountHolders/" + accountHolderId + "/accounts/" + account.getId() + "/deposits"))
                 .then()
                 .statusCode(200)
                 .extract()

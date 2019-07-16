@@ -1,6 +1,5 @@
 package revolut.transfer.integration.repositories;
 
-import com.google.common.collect.Lists;
 import org.jdbi.v3.core.Handle;
 import revolut.transfer.domain.commands.CreateAccountHolderCommand;
 import revolut.transfer.domain.models.accounts.AccountHolder;
