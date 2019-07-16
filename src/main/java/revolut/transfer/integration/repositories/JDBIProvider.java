@@ -5,6 +5,7 @@ import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.HandleConsumer;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.transaction.SerializableTransactionRunner;
+import revolut.transfer.domain.exceptions.ValidationException;
 import revolut.transfer.domain.repositories.TransactionFactory;
 
 import javax.inject.Inject;
@@ -39,8 +40,9 @@ public class JDBIProvider implements TransactionFactory {
                 callback.accept(handle);
                 handle.commit();
             });
-        } catch (Exception e) {
-            throw Throwables.propagate(e.getCause());
+        }
+        catch (Exception e) {
+            throw Throwables.propagate(e);
         }
     }
 
@@ -53,7 +55,7 @@ public class JDBIProvider implements TransactionFactory {
                 return result;
             });
         } catch (Exception e) {
-            throw Throwables.propagate(e.getCause());
+            throw Throwables.propagate(e);
         }
     }
 

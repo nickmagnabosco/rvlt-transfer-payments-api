@@ -10,7 +10,6 @@ import revolut.transfer.domain.models.transactions.TransactionStatus;
 import revolut.transfer.domain.repositories.TransactionRepository;
 
 import java.util.List;
-import java.util.Map;
 
 @Value
 @NonFinal
@@ -23,9 +22,6 @@ public class Account {
 
     private final CurrencyType currencyType;
     private final TransactionRepository transactionRepository;
-    private MonetaryAmount balance;
-    private MonetaryAmount availableBalance;
-    private List<Transaction> transactions;
 
     public Account(String id, String accountHolderId, AccountType accountType, BankAccountDetails bankAccountDetails, CurrencyType currencyType,
             TransactionRepository transactionRepository) {
@@ -35,9 +31,6 @@ public class Account {
         this.bankAccountDetails = bankAccountDetails;
         this.currencyType = currencyType;
         this.transactionRepository = transactionRepository;
-        this.balance = null;
-        this.availableBalance = null;
-        this.transactions = Lists.newArrayList();
     }
 
     public MonetaryAmount getBalance() {

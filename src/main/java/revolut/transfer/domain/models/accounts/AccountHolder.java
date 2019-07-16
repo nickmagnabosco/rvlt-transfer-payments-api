@@ -19,16 +19,4 @@ public class AccountHolder {
     private final String emailAddress;
     private final List<Account> accounts;
 
-    public AccountHolder(String id, UserTitle title, String firstName, String lastName, String emailAddress) {
-        this.id = id;
-        this.title = title;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.emailAddress = emailAddress;
-        this.accounts = Lists.newArrayList();
-    }
-
-    public AccountHolder withAccounts(List<Account> accountList) {
-        return new AccountHolder(id, title, firstName, lastName, emailAddress, accountList);
-    }
 }
