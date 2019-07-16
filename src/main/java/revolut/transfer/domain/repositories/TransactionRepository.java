@@ -15,6 +15,8 @@ public interface TransactionRepository {
     Optional<Transaction> getTransactionByRequestId(String requestId);
     Optional<Transaction> getTransactionByRequestId(Handle handle, String requestId);
 
+    Optional<Transaction> getTransactionByTransactionId(String transactionId);
+
     List<Transaction> getAllTransactionsByAccountId(String accountId);
     List<Transaction> getAllTransactionsByAccountId(Handle handle, String accountId);
 

@@ -19,13 +19,11 @@ public class TransferAdapter extends Adapter {
     }
 
     public void initialize() {
-        get("/accountHolders/:holderId/accounts/:accountId/transfers/:transferId", (req, response) -> {
-            return "";
-        }, jsonTransformer);
+        get("/accountHolders/:holderId/accounts/:accountId/transactions/:transactionId", (req, response) ->
+                transferService.getTransactionByAccountIdAndTransactionId(req.params("holderId"), req.params("accountId"), req.params("transactionId")), jsonTransformer);
 
-        get("/accountHolders/:holderId/accounts/:accountId/transfers", (req, response) -> {
-            return "";
-        }, jsonTransformer);
+        get("/accountHolders/:holderId/accounts/:accountId/transactions", (req, response) ->
+                transferService.getTransactionsByAccountId(req.params("holderId"), req.params("accountId")), jsonTransformer);
 
         post("/accountHolders/:holderId/accounts/:accountId/transfers", (req, response) ->
                 transferService.createTransfer(req.params("holderId"), req.params("accountId"), objectMapper.readValue(req.body(), CreateTransfer.class)),

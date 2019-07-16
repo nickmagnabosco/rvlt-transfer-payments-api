@@ -80,4 +80,16 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                 + "WHERE id=?", status, transactionId);
     }
 
+    @Override
+    public Optional<Transaction> getTransactionByTransactionId(String transactionId) {
+        return jdbiProvider.getJdbi().withHandle(handle ->
+                handle.createQuery(
+                        SELECT_TRANSACTION
+                                + "FROM TRANSACTION "
+                                + "WHERE id=:transactionId"
+                                + "ORDER BY created_datetime ASC")
+                        .bind("id", transactionId)
+                        .map(transactionMapper)
+                        .findFirst());
+    }
 }
