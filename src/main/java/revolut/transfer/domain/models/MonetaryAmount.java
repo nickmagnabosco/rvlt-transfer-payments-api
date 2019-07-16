@@ -39,11 +39,15 @@ public class MonetaryAmount {
         return new MonetaryAmount(this.getAmount().add(amount.getAmount(), ROUND_UP), this.getCurrencyType());
     }
 
+    public MonetaryAmount negate() {
+        return new MonetaryAmount(this.getAmount().negate(), this.getCurrencyType());
+    }
+
     public MonetaryAmount subtract(MonetaryAmount amount) {
         validateCurrencyTypeForOperation(this, amount);
-        if (amount.isGreaterThan(this)) {
-            throw new IllegalArgumentException("Result of operation cannot be less than 0.0");
-        }
+//        if (amount.isGreaterThan(this)) {
+//            throw new IllegalArgumentException("Result of operation cannot be less than 0.0");
+//        }
 
         return new MonetaryAmount(this.getAmount().subtract(amount.getAmount(), ROUND_UP), this.getCurrencyType());
     }

@@ -1,7 +1,6 @@
 package revolut.transfer.domain.commands;
 
 import org.jdbi.v3.core.Handle;
-import org.jdbi.v3.core.HandleConsumer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

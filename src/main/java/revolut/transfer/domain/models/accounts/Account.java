@@ -3,13 +3,14 @@ package revolut.transfer.domain.models.accounts;
 import com.google.common.collect.Lists;
 import lombok.*;
 import lombok.experimental.NonFinal;
-import org.jdbi.v3.core.transaction.TransactionIsolationLevel;
 import revolut.transfer.domain.models.MonetaryAmount;
 import revolut.transfer.domain.models.currency.CurrencyType;
+import revolut.transfer.domain.models.transactions.Transaction;
+import revolut.transfer.domain.models.transactions.TransactionStatus;
 import revolut.transfer.domain.repositories.TransactionRepository;
-import revolut.transfer.integration.dto.Transaction;
 
 import java.util.List;
+import java.util.Map;
 
 @Value
 @NonFinal
@@ -39,9 +40,21 @@ public class Account {
         this.transactions = Lists.newArrayList();
     }
 
-    public MonetaryAmount balance() {
-//        this.transactionRepository.getAllTransactionsByAccountId(id).stream().reduce()
-        return null;
+    public MonetaryAmount getBalance() {
+        return this.getTransactions().stream()
+                .map(transaction -> transaction.getType().isNegativeOperation() ? transaction.getAmount().negate() : transaction.getAmount())
+                .reduce(accountType.getInitialAmount(), MonetaryAmount::add);
+    }
+
+    public MonetaryAmount getAvailableBalance() {
+        return this.getTransactions().stream()
+                .filter(transaction -> transaction.getStatus().equals(TransactionStatus.COMPLETED))
+                .map(transaction -> transaction.getType().isNegativeOperation() ? transaction.getAmount().negate() : transaction.getAmount())
+                .reduce(accountType.getInitialAmount(), MonetaryAmount::add);
+    }
+
+    public List<Transaction> getTransactions() {
+       return this.transactionRepository.getAllTransactionsByAccountId(id);
     }
 
 //    public Account depositAmount(MonetaryAmount amount) {

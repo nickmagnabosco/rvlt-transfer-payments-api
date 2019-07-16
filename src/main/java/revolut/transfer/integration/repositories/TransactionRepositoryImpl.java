@@ -73,7 +73,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
                 SELECT_TRANSACTION
                         + "FROM TRANSACTION "
-                        + "WHERE account_id=:accountId")
+                        + "WHERE account_id=:accountId "
+                        + "ORDER BY created_datetime ASC")
                 .bind("accountId", accountId)
                 .map(transactionMapper)
                 .list());
