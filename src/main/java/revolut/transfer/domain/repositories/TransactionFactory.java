@@ -2,7 +2,10 @@ package revolut.transfer.domain.repositories;
 
 import org.jdbi.v3.core.Handle;
 
-public interface TransactionFactory {
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-    Handle openHandle();
+public interface TransactionFactory {
+    void useTransaction(Consumer<Handle> callback);
+    <T> T inTransaction(Function<Handle, T> callbackFn);
 }

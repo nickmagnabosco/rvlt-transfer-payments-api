@@ -3,6 +3,7 @@ package revolut.transfer.domain.commands;
 import com.google.common.collect.Lists;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.HandleConsumer;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -16,6 +17,8 @@ import revolut.transfer.domain.repositories.AccountRepository;
 import revolut.transfer.domain.repositories.BankDetailsRepository;
 import revolut.transfer.domain.repositories.TransactionFactory;
 import revolut.transfer.domain.service.BankAccountFactory;
+
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -36,6 +39,16 @@ public class CreateAccountCommandTest {
 
     @Mock
     private TransactionFactory transactionFactory;
+
+    @Before
+    public void setup() {
+        Handle handle = mock(Handle.class);
+        doAnswer(i -> {
+            Consumer<Handle> callback= (Consumer<Handle>)i.getArguments()[0];
+            callback.accept(handle);
+            return null;
+        }).when(transactionFactory).useTransaction(any());
+    }
 
     @Test(expected = ValidationException.class)
     public void validate_validatesViaAccountRepository() {
@@ -121,14 +134,6 @@ public class CreateAccountCommandTest {
 
     @Test
     public void execute_createsAccountViaAccountFactory() {
-        Handle handle = mock(Handle.class);
-        doAnswer(i -> {
-            HandleConsumer<Exception> callback= (HandleConsumer<Exception>)i.getArguments()[0];
-            callback.useHandle(handle);
-            return null;
-        }).when(handle).useTransaction(any());
-        when(transactionFactory.openHandle()).thenReturn(handle);
-
         Account account = mock(Account.class);
         when(account.getAccountType()).thenReturn(AccountType.UK);
         BankAccountDetails bankAccountDetails = mock(BankAccountDetails.class);
@@ -153,14 +158,6 @@ public class CreateAccountCommandTest {
 
     @Test
     public void execute_createsAccountViaAccountAccountRepository() {
-        Handle handle = mock(Handle.class);
-        doAnswer(i -> {
-            HandleConsumer<Exception> callback= (HandleConsumer<Exception>)i.getArguments()[0];
-            callback.useHandle(handle);
-            return null;
-        }).when(handle).useTransaction(any());
-        when(transactionFactory.openHandle()).thenReturn(handle);
-
         Account account = mock(Account.class);
         Account newAccount = mock(Account.class);
         BankAccountDetails bankAccountDetails = mock(BankAccountDetails.class);
@@ -187,14 +184,6 @@ public class CreateAccountCommandTest {
 
     @Test
     public void execute_returnCreatedAccount() {
-        Handle handle = mock(Handle.class);
-        doAnswer(i -> {
-            HandleConsumer<Exception> callback= (HandleConsumer<Exception>)i.getArguments()[0];
-            callback.useHandle(handle);
-            return null;
-        }).when(handle).useTransaction(any());
-        when(transactionFactory.openHandle()).thenReturn(handle);
-
         Account account = mock(Account.class);
         Account newAccount = mock(Account.class);
         BankAccountDetails bankAccountDetails = mock(BankAccountDetails.class);

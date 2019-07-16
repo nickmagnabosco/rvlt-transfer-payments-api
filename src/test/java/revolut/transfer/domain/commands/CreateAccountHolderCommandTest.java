@@ -2,6 +2,7 @@ package revolut.transfer.domain.commands;
 
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.HandleConsumer;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -11,6 +12,8 @@ import revolut.transfer.domain.models.accounts.*;
 import revolut.transfer.domain.repositories.AccountHolderRepository;
 import revolut.transfer.domain.repositories.AccountRepository;
 import revolut.transfer.domain.repositories.TransactionFactory;
+
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -26,6 +29,16 @@ public class CreateAccountHolderCommandTest {
 
     @Mock
     private TransactionFactory transactionFactory;
+
+    @Before
+    public void setup() {
+        Handle handle = mock(Handle.class);
+        doAnswer(i -> {
+            Consumer<Handle> callback= (Consumer<Handle>)i.getArguments()[0];
+            callback.accept(handle);
+            return null;
+        }).when(transactionFactory).useTransaction(any());
+    }
 
     @Test
     public void validate_withValidCommand_validatesCorrectly() {
@@ -189,13 +202,6 @@ public class CreateAccountHolderCommandTest {
 
     @Test
     public void execute_createAccountHolder_viaAccountHolderRepository() {
-        Handle handle = mock(Handle.class);
-        doAnswer(i -> {
-            HandleConsumer<Exception> callback= (HandleConsumer<Exception>)i.getArguments()[0];
-            callback.useHandle(handle);
-            return null;
-        }).when(handle).useTransaction(any());
-        when(transactionFactory.openHandle()).thenReturn(handle);
         CreateAccountHolderCommand subject = new CreateAccountHolderCommand(
                 "id123",
                 UserTitle.MR,
@@ -213,16 +219,6 @@ public class CreateAccountHolderCommandTest {
 
     @Test
     public void execute_returnsAccountHolder() {
-        Account account = mock(Account.class);
-        AccountHolder createAccountHolder = mock(AccountHolder.class);
-        Handle handle = mock(Handle.class);
-        doAnswer(i -> {
-            HandleConsumer<Exception> callback= (HandleConsumer<Exception>)i.getArguments()[0];
-            callback.useHandle(handle);
-            return null;
-        }).when(handle).useTransaction(any());
-        when(transactionFactory.openHandle()).thenReturn(handle);
-
         when(accountRepository.createAccount(any(), any())).thenReturn("createAcc");
         when(accountHolderRepository.createAccountHolder(any(), any())).thenReturn("");
         CreateAccountHolderCommand subject = new CreateAccountHolderCommand(

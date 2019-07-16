@@ -37,6 +37,7 @@ public class AccountService {
     }
 
     public Account getAccountByHolderIdAndAccountId(String accountHolderId, String accountId) {
+
         return accountRepository.getAccountByHolderIdAndAccountId(accountHolderId, accountId)
                 .orElseThrow(ResourceNotFoundException::new);
     }

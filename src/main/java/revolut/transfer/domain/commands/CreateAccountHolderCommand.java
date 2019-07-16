@@ -27,9 +27,8 @@ public class CreateAccountHolderCommand {
 
     public AccountHolder execute() {
         validate();
-        transactionFactory.openHandle().useTransaction(handle -> {
+        transactionFactory.useTransaction(handle -> {
             accountHolderRepository.createAccountHolder(handle,this);
-            handle.commit();
         });
         return this.toAccountHolder();
     }

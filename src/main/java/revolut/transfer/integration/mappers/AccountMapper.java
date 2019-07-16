@@ -6,6 +6,7 @@ import revolut.transfer.domain.models.accounts.Account;
 import revolut.transfer.domain.models.accounts.AccountType;
 import revolut.transfer.domain.models.currency.CurrencyType;
 import revolut.transfer.domain.repositories.BankDetailsRepository;
+import revolut.transfer.domain.repositories.TransactionRepository;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,10 +16,12 @@ import java.sql.SQLException;
 @Singleton
 public class AccountMapper implements RowMapper<Account> {
     private final BankDetailsRepository bankDetailsRepository;
+    private final TransactionRepository transactionRepository;
 
     @Inject
-    public AccountMapper(BankDetailsRepository bankDetailsRepository) {
+    public AccountMapper(BankDetailsRepository bankDetailsRepository, TransactionRepository transactionRepository) {
         this.bankDetailsRepository = bankDetailsRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     @Override
@@ -31,8 +34,6 @@ public class AccountMapper implements RowMapper<Account> {
                 accountType,
                 bankDetailsRepository.getBankDetailsByAccountId(accountId),
                 CurrencyType.valueOf(rs.getString("currency_type")),
-                accountType.getInitialAmount(),
-                accountType.getInitialAmount()
-        );
+                transactionRepository);
     }
 }

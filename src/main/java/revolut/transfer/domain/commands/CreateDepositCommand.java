@@ -3,6 +3,7 @@ package revolut.transfer.domain.commands;
 import com.google.common.collect.Lists;
 import lombok.Value;
 import lombok.experimental.NonFinal;
+import org.jdbi.v3.core.transaction.TransactionIsolationLevel;
 import revolut.transfer.domain.exceptions.ValidationException;
 import revolut.transfer.domain.exceptions.ValidationFailure;
 import revolut.transfer.domain.models.MonetaryAmount;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.jdbi.v3.core.transaction.TransactionIsolationLevel.SERIALIZABLE;
+
 @Value
 @NonFinal
 public class CreateDepositCommand {
@@ -40,7 +43,7 @@ public class CreateDepositCommand {
 
     public Transaction execute() {
         validate();
-        return transactionFactory.openHandle().inTransaction(h -> {
+        return transactionFactory.inTransaction(handle -> {
             Transaction transaction = new Transaction(
                     id,
                     requestId,
@@ -50,8 +53,7 @@ public class CreateDepositCommand {
                     depositAmount,
                     LocalDateTime.now()
             );
-            transactionRepository.createTransaction(h, transaction);
-            h.commit();
+            transactionRepository.createTransaction(handle, transaction);
             return transaction;
         });
 

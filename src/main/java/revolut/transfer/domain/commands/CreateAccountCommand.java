@@ -30,10 +30,9 @@ public class CreateAccountCommand {
         validate();
         BankAccountDetails bankAccountDetails = bankAccountFactory.createBankAccountDetails(id, accountType);
         Account account = accountFactory.createAccount(id, accountHolderId, accountType, bankAccountDetails);
-        transactionFactory.openHandle().useTransaction(h -> {
+        transactionFactory.useTransaction(h -> {
             accountRepository.createAccount(h, account);
             bankDetailsRepository.createBankDetails(h, id, bankAccountDetails);
-            h.commit();
         });
 
         return account;
