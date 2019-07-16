@@ -45,7 +45,7 @@ public class DepositTest extends ComponentTest {
         assertThat(transaction.getDateTime()).isNotEmpty();
         assertThat(transaction.getAmount()).isEqualTo(new MonetaryAmount(BigDecimal.valueOf(10), "GBP"));
         assertThat(transaction.getType()).isEqualTo("DEPOSIT");
-        assertThat(transaction.getStatus()).isEqualTo("IN_PROGRESS");
+        assertThat(transaction.getStatus()).isEqualTo("COMPLETED");
 
         Account getAccount = when()
                 .get(getFullUrl("/accountHolders/" + accountHolderDetails.getId() + "/accounts/" + account.getId()))

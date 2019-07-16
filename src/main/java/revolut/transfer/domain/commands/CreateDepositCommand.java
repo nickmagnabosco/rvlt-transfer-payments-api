@@ -17,6 +17,7 @@ import spark.utils.StringUtils;
 
 import java.util.List;
 
+import static revolut.transfer.domain.models.transactions.TransactionStatus.COMPLETED;
 import static revolut.transfer.domain.models.transactions.TransactionStatus.IN_PROGRESS;
 import static revolut.transfer.domain.models.transactions.TransactionType.DEPOSIT;
 
@@ -38,7 +39,7 @@ public class CreateDepositCommand {
         validate();
         return transactionFactory.inTransaction(handle -> {
             validateForTransaction(handle);
-            Transaction transaction = fundTransactionFactory.createTransaction(id, requestId, targetAccountId, IN_PROGRESS, DEPOSIT, depositAmount);
+            Transaction transaction = fundTransactionFactory.createTransaction(id, requestId, targetAccountId, COMPLETED, DEPOSIT, depositAmount);
             transactionRepository.createTransaction(handle, transaction);
             return transaction;
         });
