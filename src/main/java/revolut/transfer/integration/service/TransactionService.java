@@ -12,13 +12,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class TransferService {
+public class TransactionService {
 
-    private final TransactionService domain;
+    private final revolut.transfer.domain.service.TransactionService domain;
     private final TransactionTransformer transactionTransformer;
 
     @Inject
-    public TransferService(TransactionService domain, TransactionTransformer transactionTransformer) {
+    public TransactionService(revolut.transfer.domain.service.TransactionService domain, TransactionTransformer transactionTransformer) {
         this.domain = domain;
         this.transactionTransformer = transactionTransformer;
     }

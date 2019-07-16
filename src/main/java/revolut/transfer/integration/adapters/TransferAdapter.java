@@ -2,7 +2,7 @@ package revolut.transfer.integration.adapters;
 
 import revolut.transfer.integration.dto.command.CreateDeposit;
 import revolut.transfer.integration.dto.command.CreateTransfer;
-import revolut.transfer.integration.service.TransferService;
+import revolut.transfer.integration.service.TransactionService;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -12,9 +12,9 @@ import static spark.Spark.post;
 
 @Singleton
 public class TransferAdapter extends Adapter {
-    private final TransferService transferService;
+    private final TransactionService transferService;
     @Inject
-    public TransferAdapter(TransferService transferService) {
+    public TransferAdapter(TransactionService transferService) {
         this.transferService = transferService;
     }
 
