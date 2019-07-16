@@ -11,6 +11,7 @@ public interface AccountRepository {
     String createAccount(Handle handle, Account account);
     void updateAccount(Handle handle, Account updatedAccount);
     List<Account> getAllAccountsByHolderId(String accountHolderId);
+    Optional<Account> getAccountByAccountId(String accountId);
     Optional<Account> getAccountByHolderIdAndAccountId(String accountHolderId, String accountId);
 
 }

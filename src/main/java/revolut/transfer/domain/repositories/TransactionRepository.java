@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface TransactionRepository {
     String createTransaction(Handle handle, Transaction transaction);
     void updateStatus(Handle handle, String transactionId, TransactionStatus status);
+    Optional<Transaction> getTransactionByRequestId(String requestId);
     Optional<Transaction> getTransactionById(String id);
     List<Transaction> getAllTransactionsByAccountId(String accountId);
 

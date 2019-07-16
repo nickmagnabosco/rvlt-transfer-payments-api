@@ -30,11 +30,13 @@ CREATE TABLE BANK_DETAILS (
 
 CREATE TABLE TRANSACTION (
     id VARCHAR(50) PRIMARY KEY NOT NULL,
+    request_id VARCHAR(50) UNIQUE NOT NULL,
     account_id VARCHAR(50) NOT NULL,
     status VARCHAR(30) NOT NULL,
     type VARCHAR(30) NOT NULL,
     amount_value NUMERIC NOT NULL,
     amount_currency_type VARCHAR(30) NOT NULL,
+    created_datetime TIMESTAMP NOT NULL,
 
     FOREIGN KEY (account_id) REFERENCES ACCOUNT(id)
 

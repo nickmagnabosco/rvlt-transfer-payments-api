@@ -4,6 +4,7 @@ import org.jdbi.v3.core.Handle;
 import revolut.transfer.domain.models.transactions.Transaction;
 import revolut.transfer.domain.models.transactions.TransactionStatus;
 import revolut.transfer.domain.repositories.TransactionRepository;
+import revolut.transfer.domain.utility.DateTimeUtility;
 import revolut.transfer.integration.mappers.TransactionMapper;
 
 import javax.inject.Inject;
@@ -13,19 +14,22 @@ import java.util.Optional;
 
 @Singleton
 public class TransactionRepositoryImpl implements TransactionRepository {
+    public static final String SELECT_TRANSACTION = "SELECT id, request_id, account_id, status, type, amount_value, amount_currency_type, created_datetime ";
     private final TransactionMapper transactionMapper;
     private final JDBIProvider jdbiProvider;
 
     @Override
     public String createTransaction(Handle handle, Transaction transaction) {
-        handle.execute("INSERT INTO TRANSACTION (id, account_id, status, type, amount_value, amount_currency_type) "
-                + "VALUES (?, ?, ?, ?, ?, ?)",
+        handle.execute("INSERT INTO TRANSACTION (id, request_id, account_id, status, type, amount_value, amount_currency_type, created_datetime) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 transaction.getId(),
+                transaction.getRequestId(),
                 transaction.getAccountId(),
                 transaction.getStatus(),
                 transaction.getType(),
                 transaction.getAmount().getAmount(),
-                transaction.getAmount().getCurrencyType());
+                transaction.getAmount().getCurrencyType(),
+                DateTimeUtility.toTimestamp(transaction.getDateTime()));
         return transaction.getId();
     }
 
@@ -34,6 +38,17 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         handle.execute("UPDATE TRANSACTION "
                 + "WHERE id=? "
                 + "SET status=?",transactionId, status);
+    }
+
+    @Override
+    public Optional<Transaction> getTransactionByRequestId(String requestId) {
+        return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
+                SELECT_TRANSACTION
+                        + "FROM TRANSACTION "
+                        + "WHERE request_id=:requestId")
+                .bind("requestId", requestId)
+                .map(transactionMapper)
+                .findFirst());
     }
 
     @Inject
@@ -45,7 +60,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public Optional<Transaction> getTransactionById(String id) {
         return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
-                "SELECT id, account_id, status, type, amount_value, amount_currency_type "
+                SELECT_TRANSACTION
                         + "FROM TRANSACTION "
                         + "WHERE id=:id")
                 .bind("id", id)
@@ -56,7 +71,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public List<Transaction> getAllTransactionsByAccountId(String accountId) {
         return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
-                "SELECT id, account_id, status, type, amount_value, amount_currency_type "
+                SELECT_TRANSACTION
                         + "FROM TRANSACTION "
                         + "WHERE account_id=:accountId")
                 .bind("accountId", accountId)

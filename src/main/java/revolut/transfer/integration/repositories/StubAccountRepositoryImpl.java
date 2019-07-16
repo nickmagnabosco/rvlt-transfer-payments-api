@@ -52,6 +52,17 @@ public class StubAccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
+    public Optional<Account> getAccountByAccountId(String accountId) {
+        return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
+                "SELECT id, account_holder_id, account_type, currency_type "
+                        + "FROM ACCOUNT "
+                        + "WHERE id=:accountId")
+                .bind("accountId", accountId)
+                .map(accountMapper)
+                .findFirst());
+    }
+
+    @Override
     public Optional<Account> getAccountByHolderIdAndAccountId(String accountHolderId, String accountId) {
         return jdbiProvider.getJdbi().withHandle(handle -> handle.createQuery(
                 "SELECT id, account_holder_id, account_type, currency_type "

@@ -4,17 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dagger.Module;
 import dagger.Provides;
-import revolut.transfer.domain.repositories.AccountHolderRepository;
-import revolut.transfer.domain.repositories.AccountRepository;
-import revolut.transfer.domain.repositories.BankDetailsRepository;
-import revolut.transfer.domain.repositories.TransactionFactory;
+import revolut.transfer.domain.repositories.*;
 import revolut.transfer.domain.service.BankAccountFactory;
 import revolut.transfer.domain.service.StubBankAccountFactoryImpl;
 import revolut.transfer.integration.adapters.JsonTransformer;
-import revolut.transfer.integration.repositories.BankDetailsRepositoryImpl;
-import revolut.transfer.integration.repositories.JDBIProvider;
-import revolut.transfer.integration.repositories.StubAccountHolderRepositoryImpl;
-import revolut.transfer.integration.repositories.StubAccountRepositoryImpl;
+import revolut.transfer.integration.repositories.*;
 import spark.ResponseTransformer;
 
 import javax.inject.Named;
@@ -76,6 +70,11 @@ public class CommonModule {
 
     @Provides
     public TransactionFactory transactionFactory(JDBIProvider impl) {
+        return impl;
+    }
+
+    @Provides
+    public TransactionRepository transactionRepository(TransactionRepositoryImpl impl) {
         return impl;
     }
 
