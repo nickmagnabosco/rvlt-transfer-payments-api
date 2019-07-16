@@ -19,8 +19,8 @@ public class MonetaryAmount {
     private CurrencyType currencyType;
 
     public static MonetaryAmount ZERO_GBP = new MonetaryAmount(BigDecimal.ZERO, CurrencyType.GBP);
-    public static MonetaryAmount ZERO_USD = new MonetaryAmount(BigDecimal.ZERO, CurrencyType.GBP);
-    public static MonetaryAmount ZERO_EUR = new MonetaryAmount(BigDecimal.ZERO, CurrencyType.GBP);
+    public static MonetaryAmount ZERO_USD = new MonetaryAmount(BigDecimal.ZERO, CurrencyType.USD);
+    public static MonetaryAmount ZERO_EUR = new MonetaryAmount(BigDecimal.ZERO, CurrencyType.EUR);
 
     public static MonetaryAmount ofGBP(double amount) {
         return new MonetaryAmount(BigDecimal.valueOf(amount), CurrencyType.GBP);
@@ -45,11 +45,20 @@ public class MonetaryAmount {
 
     public MonetaryAmount subtract(MonetaryAmount amount) {
         validateCurrencyTypeForOperation(this, amount);
-//        if (amount.isGreaterThan(this)) {
-//            throw new IllegalArgumentException("Result of operation cannot be less than 0.0");
-//        }
 
         return new MonetaryAmount(this.getAmount().subtract(amount.getAmount(), ROUND_UP), this.getCurrencyType());
+    }
+
+    public MonetaryAmount multiply(BigDecimal value) {
+        if (value.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Negative multiplication is not supported for currencies");
+        }
+
+        return new MonetaryAmount(this.getAmount().multiply(value, ROUND_UP), this.getCurrencyType());
+    }
+
+    public MonetaryAmount setCurrency(CurrencyType currency) {
+        return new MonetaryAmount(amount, currency);
     }
 
     public boolean isGreaterThan(MonetaryAmount amount) {

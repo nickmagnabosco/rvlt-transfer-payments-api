@@ -2,7 +2,6 @@ package revolut.transfer.domain.commands;
 
 import com.google.common.collect.Lists;
 import org.jdbi.v3.core.Handle;
-import org.jdbi.v3.core.HandleConsumer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,13 +52,13 @@ public class CreateAccountCommandTest {
     @Test(expected = ValidationException.class)
     public void validate_validatesViaAccountRepository() {
         Account account = mock(Account.class);
-        when(account.getAccountType()).thenReturn(AccountType.IBAN);
+        when(account.getAccountType()).thenReturn(AccountType.EUR);
         when(accountRepository.getAllAccountsByHolderId("holder123")).thenReturn(Lists.newArrayList(account));
 
         CreateAccountCommand subject = new CreateAccountCommand(
                 "account123",
                 "holder123",
-                AccountType.IBAN,
+                AccountType.EUR,
                 accountRepository,
                 accountFactory,
                 bankDetailsRepository,
@@ -75,13 +74,13 @@ public class CreateAccountCommandTest {
     @Test(expected = ValidationException.class)
     public void validate_whenAccountHolderAlreadyHasAccountForGivenAccountType_throwsValidationException() {
         Account account = mock(Account.class);
-        when(account.getAccountType()).thenReturn(AccountType.IBAN);
+        when(account.getAccountType()).thenReturn(AccountType.EUR);
         when(accountRepository.getAllAccountsByHolderId("holder123")).thenReturn(Lists.newArrayList(account));
 
         CreateAccountCommand subject = new CreateAccountCommand(
                 "account123",
                 "holder123",
-                AccountType.IBAN,
+                AccountType.EUR,
                 accountRepository,
                 accountFactory,
                 bankDetailsRepository,
@@ -101,7 +100,7 @@ public class CreateAccountCommandTest {
         CreateAccountCommand subject = new CreateAccountCommand(
                 "account123",
                 "holder123",
-                AccountType.IBAN,
+                AccountType.EUR,
                 accountRepository,
                 accountFactory,
                 bankDetailsRepository,
@@ -139,12 +138,12 @@ public class CreateAccountCommandTest {
         BankAccountDetails bankAccountDetails = mock(BankAccountDetails.class);
 
         when(accountRepository.getAllAccountsByHolderId("holder123")).thenReturn(Lists.newArrayList(account));
-        when(bankAccountFactory.createBankAccountDetails("account123", AccountType.IBAN)).thenReturn(bankAccountDetails);
+        when(bankAccountFactory.createBankAccountDetails("account123", AccountType.EUR)).thenReturn(bankAccountDetails);
 
         CreateAccountCommand subject = new CreateAccountCommand(
                 "account123",
                 "holder123",
-                AccountType.IBAN,
+                AccountType.EUR,
                 accountRepository,
                 accountFactory,
                 bankDetailsRepository,
@@ -153,7 +152,7 @@ public class CreateAccountCommandTest {
         );
 
         subject.execute();
-        verify(accountFactory).createAccount("account123", "holder123", AccountType.IBAN, bankAccountDetails);
+        verify(accountFactory).createAccount("account123", "holder123", AccountType.EUR, bankAccountDetails);
     }
 
     @Test
@@ -164,13 +163,13 @@ public class CreateAccountCommandTest {
 
         when(account.getAccountType()).thenReturn(AccountType.UK);
         when(accountRepository.getAllAccountsByHolderId("holder123")).thenReturn(Lists.newArrayList(account));
-        when(bankAccountFactory.createBankAccountDetails("account123", AccountType.IBAN)).thenReturn(bankAccountDetails);
-        when(accountFactory.createAccount("account123","holder123", AccountType.IBAN, bankAccountDetails)).thenReturn(newAccount);
+        when(bankAccountFactory.createBankAccountDetails("account123", AccountType.EUR)).thenReturn(bankAccountDetails);
+        when(accountFactory.createAccount("account123","holder123", AccountType.EUR, bankAccountDetails)).thenReturn(newAccount);
 
         CreateAccountCommand subject = new CreateAccountCommand(
                 "account123",
                 "holder123",
-                AccountType.IBAN,
+                AccountType.EUR,
                 accountRepository,
                 accountFactory,
                 bankDetailsRepository,
@@ -190,13 +189,13 @@ public class CreateAccountCommandTest {
 
         when(account.getAccountType()).thenReturn(AccountType.UK);
         when(accountRepository.getAllAccountsByHolderId("holder123")).thenReturn(Lists.newArrayList(account));
-        when(bankAccountFactory.createBankAccountDetails("account123", AccountType.IBAN)).thenReturn(bankAccountDetails);
-        when(accountFactory.createAccount("account123","holder123", AccountType.IBAN, bankAccountDetails)).thenReturn(newAccount);
+        when(bankAccountFactory.createBankAccountDetails("account123", AccountType.EUR)).thenReturn(bankAccountDetails);
+        when(accountFactory.createAccount("account123","holder123", AccountType.EUR, bankAccountDetails)).thenReturn(newAccount);
 
         CreateAccountCommand subject = new CreateAccountCommand(
                 "account123",
                 "holder123",
-                AccountType.IBAN,
+                AccountType.EUR,
                 accountRepository,
                 accountFactory,
                 bankDetailsRepository,

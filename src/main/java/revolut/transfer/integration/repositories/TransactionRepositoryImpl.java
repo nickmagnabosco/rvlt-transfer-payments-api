@@ -36,8 +36,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public void updateStatus(Handle handle, String transactionId, TransactionStatus status) {
         handle.execute("UPDATE TRANSACTION "
-                + "WHERE id=? "
-                + "SET status=?",transactionId, status);
+                + "SET status=? "
+                + "WHERE id=?", status, transactionId);
     }
 
     @Override

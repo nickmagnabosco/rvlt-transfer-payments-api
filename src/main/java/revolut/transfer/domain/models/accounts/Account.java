@@ -57,24 +57,4 @@ public class Account {
        return this.transactionRepository.getAllTransactionsByAccountId(id);
     }
 
-//    public Account depositAmount(MonetaryAmount amount) {
-//        return new Account(
-//                id,
-//                accountHolderId,
-//                accountType,
-//                bankAccountDetails,
-//                currencyType,
-//                balance,
-//                balance.add(amount));
-//    }
-
-//    public Account withdrawAmount(MonetaryAmount amount) {
-//        return new Account(
-//                id,
-//                accountHolderId,
-//                accountType,
-//                bankAccountDetails,
-//                currencyType,
-//                balance.subtract(amount));
-//    }
 }

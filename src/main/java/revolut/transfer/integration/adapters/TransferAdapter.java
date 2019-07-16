@@ -1,6 +1,7 @@
 package revolut.transfer.integration.adapters;
 
 import revolut.transfer.integration.dto.command.CreateDeposit;
+import revolut.transfer.integration.dto.command.CreateTransfer;
 import revolut.transfer.integration.service.TransferService;
 
 import javax.inject.Inject;
@@ -26,9 +27,9 @@ public class TransferAdapter extends Adapter {
             return "";
         }, jsonTransformer);
 
-        post("/accountHolders/:holderId/transfers", (req, response) -> {
-            return "";
-        }, jsonTransformer);
+        post("/accountHolders/:holderId/accounts/:accountId/transfers", (req, response) ->
+                transferService.createTransfer(req.params("holderId"), req.params("accountId"), objectMapper.readValue(req.body(), CreateTransfer.class)),
+                jsonTransformer);
 
         post("/accountHolders/:holderId/accounts/:accountId/deposit", (req, response) ->
                 transferService.createDeposit(req.params("holderId"), req.params("accountId"), objectMapper.readValue(req.body(), CreateDeposit.class)),

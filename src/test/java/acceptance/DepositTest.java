@@ -17,7 +17,7 @@ import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-public class TransactionTest extends ComponentTest {
+public class DepositTest extends ComponentTest {
     @Test
     public void createDepositTransaction() {
         AccountHolderDetails accountHolderDetails = givenAccountHolder(new CreateAccountHolder(

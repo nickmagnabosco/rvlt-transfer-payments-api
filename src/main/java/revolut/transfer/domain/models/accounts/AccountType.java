@@ -8,7 +8,7 @@ import spark.utils.StringUtils;
 
 public enum AccountType {
     UK(CurrencyType.GBP, MonetaryAmount.ZERO_GBP), // Account with sort code and account number
-    IBAN(CurrencyType.EUR, MonetaryAmount.ZERO_EUR),
+    EUR(CurrencyType.EUR, MonetaryAmount.ZERO_EUR),
     USD(CurrencyType.USD, MonetaryAmount.ZERO_USD); // routing number, account number, account type
 
     private final CurrencyType accountCurrency;

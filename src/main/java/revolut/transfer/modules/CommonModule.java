@@ -6,9 +6,11 @@ import dagger.Module;
 import dagger.Provides;
 import revolut.transfer.domain.repositories.*;
 import revolut.transfer.domain.service.BankAccountFactory;
+import revolut.transfer.domain.service.CurrencyExchangeService;
 import revolut.transfer.domain.service.StubBankAccountFactoryImpl;
 import revolut.transfer.integration.adapters.JsonTransformer;
 import revolut.transfer.integration.repositories.*;
+import revolut.transfer.integration.service.StubCurrencyExchangeServiceImpl;
 import spark.ResponseTransformer;
 
 import javax.inject.Named;
@@ -78,4 +80,8 @@ public class CommonModule {
         return impl;
     }
 
+    @Provides
+    public CurrencyExchangeService currencyExchangeService(StubCurrencyExchangeServiceImpl impl) {
+        return impl;
+    }
 }

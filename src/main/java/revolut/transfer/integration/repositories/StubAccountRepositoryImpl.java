@@ -3,6 +3,7 @@ package revolut.transfer.integration.repositories;
 import org.jdbi.v3.core.Handle;
 import revolut.transfer.domain.exceptions.ResourceNotFoundException;
 import revolut.transfer.domain.models.accounts.Account;
+import revolut.transfer.domain.models.currency.CurrencyType;
 import revolut.transfer.domain.repositories.AccountRepository;
 import revolut.transfer.integration.mappers.AccountMapper;
 
@@ -73,5 +74,4 @@ public class StubAccountRepositoryImpl implements AccountRepository {
                 .map(accountMapper)
                 .findFirst());
     }
-
 }

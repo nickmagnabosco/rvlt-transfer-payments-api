@@ -25,7 +25,7 @@ public class AccountTest extends ComponentTest {
                 "myemail@address.com",
                 "UK"));
 
-        CreateAccountCommand createAccountCommand = new CreateAccountCommand("IBAN");
+        CreateAccountCommand createAccountCommand = new CreateAccountCommand("EUR");
         Account response = given()
                 .body(createAccountCommand)
                 .when()
@@ -37,7 +37,7 @@ public class AccountTest extends ComponentTest {
                 .as(Account.class);
 
         assertThat(response.getId()).isNotEmpty();
-        assertThat(response.getAccountType()).isEqualTo("IBAN");
+        assertThat(response.getAccountType()).isEqualTo("EUR");
         assertThat(response.getAccountHolderId()).isEqualTo(accountHolderDetails.getId());
         assertThat(response.getCurrencyType()).isEqualTo("EUR");
         assertThat(response.getBalance()).isEqualTo(new MonetaryAmount(revolut.transfer.domain.models.MonetaryAmount.ZERO_EUR));
@@ -113,7 +113,7 @@ public class AccountTest extends ComponentTest {
                 .body()
                 .as(Account.class);
 
-        CreateAccountCommand createAccountCommand2 = new CreateAccountCommand("IBAN");
+        CreateAccountCommand createAccountCommand2 = new CreateAccountCommand("EUR");
         Account secondAccount = given()
                 .body(createAccountCommand2)
                 .when()

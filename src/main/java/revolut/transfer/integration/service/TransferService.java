@@ -1,10 +1,11 @@
 package revolut.transfer.integration.service;
 
 import revolut.transfer.domain.commands.CreateDepositCommand;
+import revolut.transfer.domain.commands.CreateTransferCommand;
 import revolut.transfer.domain.service.TransactionService;
 import revolut.transfer.integration.dto.Transaction;
 import revolut.transfer.integration.dto.command.CreateDeposit;
-import revolut.transfer.integration.mappers.TransactionMapper;
+import revolut.transfer.integration.dto.command.CreateTransfer;
 import revolut.transfer.integration.transformers.TransactionTransformer;
 
 import javax.inject.Inject;
@@ -23,7 +24,12 @@ public class TransferService {
     }
 
     public Transaction createDeposit(String accountHolderId, String accountId, CreateDeposit createDeposit) {
-        CreateDepositCommand transform = transactionTransformer.transform(accountHolderId, accountId, createDeposit);
-        return transactionTransformer.transformTransaction(domain.createDeposit(transform));
+        CreateDepositCommand createDepositCommand = transactionTransformer.transform(accountHolderId, accountId, createDeposit);
+        return transactionTransformer.transformTransaction(domain.createDeposit(createDepositCommand));
+    }
+
+    public Transaction createTransfer(String accountHolderId, String accountId, CreateTransfer createTransfer) {
+        CreateTransferCommand createTransferCommand = transactionTransformer.transform(accountHolderId, accountId, createTransfer);
+        return transactionTransformer.transformTransaction(domain.createTransfer(createTransferCommand));
     }
 }
