@@ -18,4 +18,13 @@ public class Transaction {
     private final MonetaryAmount amount;
     private final LocalDateTime dateTime;
 
+    public Transaction withNewStatus(TransactionStatus newStatus) {
+        return new Transaction(id,
+                requestId,
+                accountId,
+                newStatus,
+                type,
+                amount,
+                dateTime);
+    }
 }

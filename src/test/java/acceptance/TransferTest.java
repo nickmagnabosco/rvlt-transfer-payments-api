@@ -59,7 +59,7 @@ public class TransferTest extends ComponentTest {
         assertThat(transaction.getDateTime()).isNotEmpty();
         assertThat(transaction.getAmount()).isEqualTo(new MonetaryAmount(BigDecimal.valueOf(10), "GBP"));
         assertThat(transaction.getType()).isEqualTo("OUTBOUND_PAYMENT");
-        assertThat(transaction.getStatus()).isEqualTo("IN_PROGRESS");
+        assertThat(transaction.getStatus()).isEqualTo("COMPLETED");
 
         Account updatedSenderAccount = when()
                 .get(getFullUrl("/accountHolders/" + sender.getId() + "/accounts/" + senderAccount.getId()))
@@ -120,7 +120,7 @@ public class TransferTest extends ComponentTest {
         assertThat(transaction.getDateTime()).isNotEmpty();
         assertThat(transaction.getAmount()).isEqualTo(new MonetaryAmount(BigDecimal.valueOf(10), "GBP"));
         assertThat(transaction.getType()).isEqualTo("OUTBOUND_PAYMENT");
-        assertThat(transaction.getStatus()).isEqualTo("IN_PROGRESS");
+        assertThat(transaction.getStatus()).isEqualTo("COMPLETED");
 
         Account updatedSenderAccount = when()
                 .get(getFullUrl("/accountHolders/" + sender.getId() + "/accounts/" + senderAccount.getId()))
