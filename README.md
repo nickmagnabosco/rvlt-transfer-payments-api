@@ -48,7 +48,7 @@ The main entities and features of the application are:
   - Account holder: can have multiple accounts, with different currencies
   - Account: have an account type with an associated currency type
     - Balance: the balance is calculated from the transactions associated with the account. The calculation takes care of ignoring cancelled and pending transactions, depending on the required property (available balance, balance) 
-  - Transaction: represent a money transaction between accounts:
+  - Transaction: a money transaction between accounts:
     - Deposit: add money to the specified account
     - Transfer: move money from a source account to a target account. It support transfer between different currencies (i.e. if the specified transfer amount is in GBP and the target account is in EUR,
     it will automatically convert the amount into EUR using a currency exchange service)
