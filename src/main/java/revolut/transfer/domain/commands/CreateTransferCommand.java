@@ -1,6 +1,7 @@
 package revolut.transfer.domain.commands;
 
 import com.google.common.collect.Lists;
+import lombok.AllArgsConstructor;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.jdbi.v3.core.Handle;
@@ -38,24 +39,59 @@ public class CreateTransferCommand {
     private final CurrencyExchangeService currencyExchangeService;
     private final FundTransactionFactory fundTransactionFactory;
 
+//    public Transaction execute() {
+//        validate();
+//        return transactionFactory.inTransaction(handle -> {
+//            validateTransaction(handle);
+//
+//            Account sourceAccount = getSourceAccountForTransfer(handle);
+//            Account targetAccount = getTargetAccountForTransfer(handle);
+//
+//            MonetaryAmount valueForTargetAccount = getCurrentValueForTargetAccount(targetAccount);
+//            Transaction withdrawTransaction = fundTransactionFactory.createTransaction(id, requestId, sourceAccountId, IN_PROGRESS, OUTBOUND_PAYMENT, transferAmount);
+//            transactionRepository.createTransaction(handle, withdrawTransaction);
+//
+//            Transaction paymentTransaction = fundTransactionFactory.createTransactionNewId(targetAccountId, IN_PROGRESS, INCOMING_PAYMENT, valueForTargetAccount);
+//            transactionRepository.createTransaction(handle, paymentTransaction);
+//
+//            transactionRepository.updateStatus(handle, withdrawTransaction.getId(), TransactionStatus.COMPLETED);
+//            transactionRepository.updateStatus(handle, paymentTransaction.getId(), TransactionStatus.COMPLETED);
+//            validateAmountForTransfer(sourceAccount);
+//
+//            return withdrawTransaction;
+//        });
+//    }
+
     public Transaction execute() {
         validate();
-        return transactionFactory.inTransaction(handle -> {
+        PendingTransaction pendingTransaction = transactionFactory.inTransaction((handle -> {
             validateTransaction(handle);
+
+            Account sourceAccount = getSourceAccountForTransfer(handle);
             Account targetAccount = getTargetAccountForTransfer(handle);
 
-            MonetaryAmount valueForTargetAccount= getCurrentValueForTargetAccount(targetAccount);
-            Transaction withdrawTransaction = fundTransactionFactory.createTransaction(id, requestId, sourceAccountId, IN_PROGRESS, OUTBOUND_PAYMENT, transferAmount);
-            transactionRepository.createTransaction(handle, withdrawTransaction);
+            MonetaryAmount valueForTargetAccount = getCurrentValueForTargetAccount(targetAccount);
+            Transaction outboundPaymentTransaction = fundTransactionFactory.createTransaction(id, requestId, sourceAccountId, IN_PROGRESS, OUTBOUND_PAYMENT, transferAmount);
+            transactionRepository.createTransaction(handle, outboundPaymentTransaction);
 
-            Transaction paymentTransaction = fundTransactionFactory.createTransactionNewId(targetAccountId, IN_PROGRESS, INCOMING_PAYMENT, valueForTargetAccount);
-            transactionRepository.createTransaction(handle, paymentTransaction);
+            Transaction incomingPaymentTransaction = fundTransactionFactory.createTransactionNewId(targetAccountId, IN_PROGRESS, INCOMING_PAYMENT, valueForTargetAccount);
+            transactionRepository.createTransaction(handle, incomingPaymentTransaction);
 
-            transactionRepository.updateStatus(handle, withdrawTransaction.getId(), TransactionStatus.COMPLETED);
-            transactionRepository.updateStatus(handle, paymentTransaction.getId(), TransactionStatus.COMPLETED);
+            return new PendingTransaction(outboundPaymentTransaction, incomingPaymentTransaction, sourceAccount);
+        }));
 
-            return withdrawTransaction;
-        });
+        return transactionFactory.inTransactionWithRollback(handle -> {
+            validateAmountForTransfer(pendingTransaction.getSourceAccount());
+
+            transactionRepository.updateStatus(handle, pendingTransaction.getInboundPaymentTransaction().getId(), TransactionStatus.COMPLETED);
+            transactionRepository.updateStatus(handle, pendingTransaction.getOutboundPaymentTransaction().getId(), TransactionStatus.COMPLETED);
+
+            return pendingTransaction.getOutboundPaymentTransaction();
+        }, (handle -> {
+            transactionRepository.updateStatus(handle, pendingTransaction.getOutboundPaymentTransaction().getId(), FAILED);
+            transactionRepository.updateStatus(handle, pendingTransaction.getInboundPaymentTransaction().getId(), FAILED);
+            return transactionRepository.getTransactionByTransactionId(pendingTransaction.getOutboundPaymentTransaction().getId()).orElse(null);
+        }));
     }
 
     public void validate() {
@@ -106,11 +142,26 @@ public class CreateTransferCommand {
         return targetAccount;
     }
 
+    private void validateAmountForTransfer(Account sourceAccount) {
+        if (sourceAccount.getAvailableBalance().isLessThan(transferAmount)) {
+            throw new ValidationException(new ValidationFailure("Unsufficient funds for transfer"));
+        }
+    }
+
     private MonetaryAmount getCurrentValueForTargetAccount(Account targetAccount) {
         if (!transferAmount.getCurrencyType().equals(targetAccount.getCurrencyType())) {
             return currencyExchangeService.exchange(transferAmount, targetAccount.getCurrencyType());
         }
 
         return transferAmount;
+    }
+
+    @AllArgsConstructor
+    @Value
+    @NonFinal
+    public static class PendingTransaction {
+        private final Transaction outboundPaymentTransaction;
+        private final Transaction inboundPaymentTransaction;
+        private final Account sourceAccount;
     }
 }

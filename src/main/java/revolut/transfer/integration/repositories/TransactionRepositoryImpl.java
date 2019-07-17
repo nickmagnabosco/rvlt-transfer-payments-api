@@ -86,9 +86,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                 handle.createQuery(
                         SELECT_TRANSACTION
                                 + "FROM TRANSACTION "
-                                + "WHERE id=:transactionId"
-                                + "ORDER BY created_datetime ASC")
-                        .bind("id", transactionId)
+                                + "WHERE id=:transactionId ")
+                        .bind("transactionId", transactionId)
                         .map(transactionMapper)
                         .findFirst());
     }

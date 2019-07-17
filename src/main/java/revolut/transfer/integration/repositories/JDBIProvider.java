@@ -57,4 +57,21 @@ public class JDBIProvider implements TransactionFactory {
         }
     }
 
+    @Override
+    public <T> T inTransactionWithRollback(Function<Handle, T> callbackFn, Function<Handle, T>  rollbackAction) {
+        Handle openHandle = getJdbi().open();
+        try {
+            openHandle.begin();
+            openHandle.setTransactionIsolation(SERIALIZABLE);
+            T result = callbackFn.apply(openHandle);
+            openHandle.commit();
+            return result;
+        } catch (Exception e) {
+            openHandle.rollback();
+            return rollbackAction.apply(openHandle);
+//            throw Throwables.propagate(e);
+        } finally {
+            openHandle.close();
+        }
+    }
 }
