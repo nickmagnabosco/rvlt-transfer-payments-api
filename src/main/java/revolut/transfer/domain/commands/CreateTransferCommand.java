@@ -9,7 +9,6 @@ import revolut.transfer.domain.exceptions.ValidationFailure;
 import revolut.transfer.domain.models.MonetaryAmount;
 import revolut.transfer.domain.models.accounts.Account;
 import revolut.transfer.domain.models.transactions.Transaction;
-import revolut.transfer.domain.models.transactions.TransactionStatus;
 import revolut.transfer.domain.models.transactions.FundTransactionFactory;
 import revolut.transfer.domain.repositories.AccountRepository;
 import revolut.transfer.domain.repositories.TransactionFactory;
@@ -78,15 +77,10 @@ public class CreateTransferCommand {
             failures.add(new ValidationFailure("Source account and target account id cannot be equal for transfer"));
         }
 
-        if (StringUtils.isBlank(targetAccountId)) {
-            failures.add(new ValidationFailure("Account id must be provided"));
-        }
-
         if (transferAmount == null || transferAmount.getAmount() == null || transferAmount.getCurrencyType() == null ||
                 transferAmount.getAmount().compareTo(MonetaryAmount.ZERO_GBP.getAmount()) <= 0) {
             failures.add(new ValidationFailure("Monetary amount not valid"));
         }
-
 
         if (!failures.isEmpty()) {
             throw new ValidationException(failures);
@@ -105,13 +99,8 @@ public class CreateTransferCommand {
     }
 
     private Account getTargetAccountForTransfer(Handle handle) {
-        Account targetAccount = accountRepository.getAccountByAccountId(handle, targetAccountId)
+        return accountRepository.getAccountByAccountId(handle, targetAccountId)
                 .orElseThrow(() -> new ValidationException(new ValidationFailure("Target account id does not exist")));
-
-        if (targetAccount.getAccountHolderId().equals(accountHolderId)) {
-            throw new ValidationException(new ValidationFailure("Cannot perform transfer for same account"));
-        }
-        return targetAccount;
     }
 
     private void validateAmountForTransfer(Account sourceAccount) {
