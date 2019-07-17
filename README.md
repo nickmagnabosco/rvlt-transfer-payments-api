@@ -104,7 +104,7 @@ GET /accountHolders/:holderId/accounts
 RESPONSE:
 [
     {
-          "id",
+          "id": "id123",
           "accountHolderId": "hold123",
           "accountType": "UK",
           "currencyType": "GBP",
@@ -129,7 +129,7 @@ REQUEST:
 }
 RESPONSE:
 {
-      "id",
+      "id": "id123",
       "accountHolderId": "hold123",
       "accountType": "UK",
       "currencyType": "GBP",
@@ -148,7 +148,7 @@ RESPONSE:
 GET /accountHolders/:holderId/accounts/:accountId
 RESPONSE:
 {
-      "id",
+      "id": "id123",
       "accountHolderId": "hold123",
       "accountType": "UK",
       "currencyType": "GBP",
@@ -203,22 +203,15 @@ REQUEST:
     "transferAmount": { amount: 100.0, currencyType: "GBP" }
 }
 RESPONSE:
-[
-    {
-          private String id;
-          "accountHolderId": "hold123",
-          "accountType": "UK",
-          "currencyType": "GBP",
-          "balance": { amount: 100.0, currencyType: "GBP" },
-          "bankAccountDetails": {
-            "iban": "GB89 3704 0044 0532 0130 00",          
-            "bic": "CTBAAU2S",      
-            sortCode: "123456",
-            accountNumber: "11223344",
-          }
-    },
-    { ... }
-]
+{
+    "id": "id123",   
+    "requestId": "request123",
+    "accountId": "acc123",    
+    "status": "COMPLETED",        
+    "type": "TRANSFER",    
+    "amount": { amount: 100.0, currencyType: "GBP" },
+    "dateTime": "2002-09-24-06:00"      
+}
 ```
 ```
 POST /accountHolders/:holderId/accounts/:accountId/deposits
@@ -229,20 +222,13 @@ REQUEST:
     "depositAmount": { amount: 100.0, currencyType: "GBP" }
 }
 RESPONSE:
-[
-    {
-          private String id;
-          "accountHolderId": "hold123",
-          "accountType": "UK",
-          "currencyType": "GBP",
-          "balance": { amount: 100.0, currencyType: "GBP" },
-          "bankAccountDetails": {
-            "iban": "GB89 3704 0044 0532 0130 00",          
-            "bic": "CTBAAU2S",      
-            sortCode: "123456",
-            accountNumber: "11223344",
-          }
-    },
-    { ... }
-]
+{
+    "id": "id123",   
+    "requestId": "request123",
+    "accountId": "acc123",    
+    "status": "COMPLETED",        
+    "type": "DEPOSIT",    
+    "amount": { amount: 100.0, currencyType: "GBP" },
+    "dateTime": "2002-09-24-06:00"      
+}
 ```
