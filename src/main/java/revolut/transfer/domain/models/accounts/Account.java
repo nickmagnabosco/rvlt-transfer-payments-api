@@ -34,7 +34,7 @@ public class Account {
 
     public MonetaryAmount getBalance() {
         return this.getTransactions().stream()
-                .filter(transaction -> !transaction.getStatus().equals(TransactionStatus.FAILED))
+                .filter(transaction -> transaction.getStatus().equals(TransactionStatus.COMPLETED))
                 .map(transaction -> transaction.getType().isNegativeOperation() ? transaction.getAmount().negate() : transaction.getAmount())
                 .reduce(accountType.getInitialAmount(), MonetaryAmount::add);
     }
@@ -42,7 +42,6 @@ public class Account {
     public MonetaryAmount getAvailableBalance() {
         return this.getTransactions().stream()
                 .filter(transaction -> !transaction.getStatus().equals(TransactionStatus.FAILED))
-                .filter(transaction -> !transaction.getStatus().equals(TransactionStatus.IN_PROGRESS))
                 .map(transaction -> transaction.getType().isNegativeOperation() ? transaction.getAmount().negate() : transaction.getAmount())
                 .reduce(accountType.getInitialAmount(), MonetaryAmount::add);
     }

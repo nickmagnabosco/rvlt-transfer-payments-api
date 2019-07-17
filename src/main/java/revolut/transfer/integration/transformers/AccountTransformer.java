@@ -68,6 +68,7 @@ public class AccountTransformer {
                 account.getAccountType().name(),
                 account.getCurrencyType().name(),
                 new MonetaryAmount(account.getBalance()),
+                new MonetaryAmount(account.getAvailableBalance()),
                 transformBankAccountDetails(account.getBankAccountDetails()));
     }
 

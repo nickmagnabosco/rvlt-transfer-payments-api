@@ -18,6 +18,7 @@ public class Account {
     private String accountType;
     private String currencyType;
     private MonetaryAmount balance;
+    private MonetaryAmount availableBalance;
     private BankAccountDetails bankAccountDetails;
 
 }

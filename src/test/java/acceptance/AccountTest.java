@@ -40,6 +40,7 @@ public class AccountTest extends ComponentTest {
         assertThat(response.getAccountHolderId()).isEqualTo(accountHolderDetails.getId());
         assertThat(response.getCurrencyType()).isEqualTo("EUR");
         assertThat(response.getBalance()).isEqualTo(new MonetaryAmount(revolut.transfer.domain.models.MonetaryAmount.ZERO_EUR));
+        assertThat(response.getAvailableBalance()).isEqualTo(new MonetaryAmount(revolut.transfer.domain.models.MonetaryAmount.ZERO_EUR));
         assertThat(response.getBankAccountDetails()).isNotNull();
         assertThat(response.getBankAccountDetails().getBic()).isNotEmpty();
         assertThat(response.getBankAccountDetails().getSortCode()).isEmpty();

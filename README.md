@@ -64,7 +64,8 @@ The main entities and features of the application are:
 API Endpoints
 ------
  
- ####Account
+ ##Account
+ 
  ```
 GET /accountHolders/:holderId
 RESPONSE: 
@@ -160,7 +161,7 @@ RESPONSE:
 
 ```
 
-####Transfers
+##Transfers
 ```
 GET /accountHolders/:holderId/accounts/:accountId/transactions/:transactionId
 RESPONSE:

@@ -67,6 +67,7 @@ public class TransferTest extends ComponentTest {
                 .body()
                 .as(Account.class);
         assertThat(updatedSenderAccount.getBalance()).isEqualTo(new MonetaryAmount(BigDecimal.valueOf(90), "GBP"));
+        assertThat(updatedSenderAccount.getAvailableBalance()).isEqualTo(new MonetaryAmount(BigDecimal.valueOf(90), "GBP"));
 
         Account updatedReceiverAccount = when()
                 .get(getFullUrl("/accountHolders/" + receiver.getId() + "/accounts/" + receiverAccount.getId()))
@@ -76,6 +77,7 @@ public class TransferTest extends ComponentTest {
                 .body()
                 .as(Account.class);
         assertThat(updatedReceiverAccount.getBalance()).isEqualTo(new MonetaryAmount(BigDecimal.valueOf(10), "GBP"));
+        assertThat(updatedReceiverAccount.getAvailableBalance()).isEqualTo(new MonetaryAmount(BigDecimal.valueOf(10), "GBP"));
     }
 
     @Test
@@ -126,6 +128,7 @@ public class TransferTest extends ComponentTest {
                 .body()
                 .as(Account.class);
         assertThat(updatedSenderAccount.getBalance()).isEqualTo(new MonetaryAmount(BigDecimal.valueOf(90), "GBP"));
+        assertThat(updatedSenderAccount.getAvailableBalance()).isEqualTo(new MonetaryAmount(BigDecimal.valueOf(90), "GBP"));
 
         Account updatedReceiverAccount = when()
                 .get(getFullUrl("/accountHolders/" + receiver.getId() + "/accounts/" + receiverAccount.getId()))
@@ -192,6 +195,7 @@ public class TransferTest extends ComponentTest {
                 .body()
                 .as(Account.class);
         assertThat(updatedSenderAccount.getBalance()).isEqualTo(new MonetaryAmount(BigDecimal.valueOf(100), "GBP"));
+        assertThat(updatedSenderAccount.getAvailableBalance()).isEqualTo(new MonetaryAmount(BigDecimal.valueOf(100), "GBP"));
 
         Account updatedReceiverAccount = when()
                 .get(getFullUrl("/accountHolders/" + receiver.getId() + "/accounts/" + receiverAccount.getId()))
@@ -201,5 +205,6 @@ public class TransferTest extends ComponentTest {
                 .body()
                 .as(Account.class);
         assertThat(updatedReceiverAccount.getBalance()).isEqualTo(new MonetaryAmount(BigDecimal.valueOf(0), "EUR"));
+        assertThat(updatedReceiverAccount.getAvailableBalance()).isEqualTo(new MonetaryAmount(BigDecimal.valueOf(0), "EUR"));
     }
 }

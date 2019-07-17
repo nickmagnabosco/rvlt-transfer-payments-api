@@ -12,11 +12,16 @@ import revolut.transfer.domain.repositories.TransactionRepository;
 @AllArgsConstructor
 @Value
 @NonFinal
-public class PendingTransaction {
+public class PendingTransferTransaction {
     private final Transaction outboundPaymentTransaction;
     private final Transaction inboundPaymentTransaction;
     private final Account sourceAccount;
     private final TransactionRepository transactionRepository;
+    private final boolean canBeExecuted;
+
+    public boolean canBeExecuted() {
+        return canBeExecuted;
+    }
 
     public void updatePendingTransactions(Handle handle, TransactionStatus status) {
         transactionRepository.updateStatus(handle, getOutboundPaymentTransaction().getId(), status);

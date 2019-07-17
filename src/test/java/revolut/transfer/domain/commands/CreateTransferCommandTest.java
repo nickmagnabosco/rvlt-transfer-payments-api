@@ -40,7 +40,7 @@ public class CreateTransferCommandTest {
     private FundTransactionFactory fundTransactionFactory;
 
     @Mock
-    private PendingTransaction pendingTransaction;
+    private PendingTransferTransaction pendingTransaction;
 
     @Mock
     private Transaction outboundTransaction;
@@ -297,6 +297,7 @@ public class CreateTransferCommandTest {
     public void execute_whenTransferAmount_isDifferentThanTargetAccountCurrency_getTransferAmountFromCurrencyExchangeService() {
         when(transactionRepository.getTransactionByRequestId(any(), eq("req123"))).thenReturn(Optional.empty());
         Account sourceAccount = mock(Account.class);
+        when(sourceAccount.getAvailableBalance()).thenReturn(MonetaryAmount.ofGBP(100));
         Account targetAccount = mock(Account.class);
         when(targetAccount.getCurrencyType()).thenReturn(CurrencyType.EUR);
         when(targetAccount.getAccountHolderId()).thenReturn("otherAccHolder123");
@@ -326,6 +327,7 @@ public class CreateTransferCommandTest {
     public void execute_whenTransferAmount_isSameCurrencyAccountCurrency_doesNotCallExchangeService() {
         when(transactionRepository.getTransactionByRequestId(any(), eq("req123"))).thenReturn(Optional.empty());
         Account sourceAccount = mock(Account.class);
+        when(sourceAccount.getAvailableBalance()).thenReturn(MonetaryAmount.ofGBP(100));
         Account targetAccount = mock(Account.class);
         when(targetAccount.getCurrencyType()).thenReturn(CurrencyType.GBP);
         when(targetAccount.getAccountHolderId()).thenReturn("otherAccHolder123");
@@ -355,6 +357,7 @@ public class CreateTransferCommandTest {
     public void execute_createOutboundPaymentTransaction_viaFundTransactionFactory_saveItToRepository() {
         when(transactionRepository.getTransactionByRequestId(any(), eq("req123"))).thenReturn(Optional.empty());
         Account sourceAccount = mock(Account.class);
+        when(sourceAccount.getAvailableBalance()).thenReturn(MonetaryAmount.ofGBP(100));
         Account targetAccount = mock(Account.class);
         when(targetAccount.getCurrencyType()).thenReturn(CurrencyType.GBP);
         when(targetAccount.getAccountHolderId()).thenReturn("otherAccHolder123");
@@ -387,9 +390,44 @@ public class CreateTransferCommandTest {
     }
 
     @Test
+    public void execute_createInboundPaymentTransaction_insufficientFund_createFailedTransaction() {
+        when(transactionRepository.getTransactionByRequestId(any(), eq("req123"))).thenReturn(Optional.empty());
+        Account sourceAccount = mock(Account.class);
+        when(sourceAccount.getAvailableBalance()).thenReturn(MonetaryAmount.ofGBP(10));
+        Account targetAccount = mock(Account.class);
+        when(targetAccount.getCurrencyType()).thenReturn(CurrencyType.GBP);
+        when(targetAccount.getAccountHolderId()).thenReturn("otherAccHolder123");
+        when(accountRepository.getAccountByHolderIdAndAccountId(any(), eq("accHol123"), eq("sourceAcc123"))).thenReturn(Optional.of(sourceAccount));
+        when(accountRepository.getAccountByAccountId(any(), eq("targetAcc123"))).thenReturn(Optional.of(targetAccount));
+
+        MonetaryAmount transferAmount = MonetaryAmount.ofGBP(100);
+
+        when(fundTransactionFactory.createTransaction("id123", "req123", "sourceAcc123", TransactionStatus.FAILED, TransactionType.OUTBOUND_PAYMENT, transferAmount)).thenReturn(outboundTransaction);
+
+        CreateTransferCommand createTransferCommand = new CreateTransferCommand(
+                "id123",
+                "accHol123",
+                "req123",
+                "sourceAcc123",
+                "targetAcc123",
+                transferAmount,
+                transactionRepository,
+                transactionFactory,
+                accountRepository,
+                currencyExchangeService,
+                fundTransactionFactory
+        );
+
+        createTransferCommand.execute();
+        verify(transactionRepository).createTransaction(any(), eq(outboundTransaction));
+        verify(transactionRepository, never()).createTransaction(any(), eq(inboundTransaction));
+    }
+
+    @Test
     public void execute_createInboundPaymentTransaction_viaFundTransactionFactory_saveItToRepository() {
         when(transactionRepository.getTransactionByRequestId(any(), eq("req123"))).thenReturn(Optional.empty());
         Account sourceAccount = mock(Account.class);
+        when(sourceAccount.getAvailableBalance()).thenReturn(MonetaryAmount.ofGBP(100));
         Account targetAccount = mock(Account.class);
         when(targetAccount.getCurrencyType()).thenReturn(CurrencyType.GBP);
         when(targetAccount.getAccountHolderId()).thenReturn("otherAccHolder123");
@@ -421,11 +459,14 @@ public class CreateTransferCommandTest {
     }
 
     @Test
-    public void execute_whenInsufficientFunds_throwsValidationException_andUpdateStatusToFailed() {
+    public void execute_whenInsufficientFunds_afterTransactionCreated_throwsValidationException_andUpdateStatusToFailed() {
         when(transactionRepository.getTransactionByRequestId(any(), eq("req123"))).thenReturn(Optional.empty());
         Account sourceAccount = mock(Account.class);
-        when(sourceAccount.getAvailableBalance()).thenReturn(MonetaryAmount.ZERO_GBP);
+        when(sourceAccount.getAvailableBalance())
+                .thenReturn(MonetaryAmount.ofGBP(100))
+                .thenReturn(MonetaryAmount.ofGBP(10));
         when(pendingTransaction.getSourceAccount()).thenReturn(sourceAccount);
+        when(pendingTransaction.canBeExecuted()).thenReturn(true);
 
         Account targetAccount = mock(Account.class);
         when(targetAccount.getCurrencyType()).thenReturn(CurrencyType.GBP);
@@ -464,6 +505,7 @@ public class CreateTransferCommandTest {
         Account sourceAccount = mock(Account.class);
         when(sourceAccount.getAvailableBalance()).thenReturn(MonetaryAmount.ofGBP(200));
         when(pendingTransaction.getSourceAccount()).thenReturn(sourceAccount);
+        when(pendingTransaction.canBeExecuted()).thenReturn(true);
 
         Account targetAccount = mock(Account.class);
         when(targetAccount.getCurrencyType()).thenReturn(CurrencyType.GBP);

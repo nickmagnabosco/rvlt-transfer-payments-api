@@ -10,6 +10,7 @@ import revolut.transfer.domain.models.MonetaryAmount;
 import revolut.transfer.domain.models.accounts.Account;
 import revolut.transfer.domain.models.transactions.Transaction;
 import revolut.transfer.domain.models.transactions.FundTransactionFactory;
+import revolut.transfer.domain.models.transactions.TransactionStatus;
 import revolut.transfer.domain.repositories.AccountRepository;
 import revolut.transfer.domain.repositories.TransactionFactory;
 import revolut.transfer.domain.repositories.TransactionRepository;
@@ -39,21 +40,11 @@ public class CreateTransferCommand {
 
     public Transaction execute() {
         validate();
-        PendingTransaction pendingTransaction = transactionFactory.inTransaction((handle -> {
-            validateTransaction(handle);
-            Account sourceAccount = getSourceAccountForTransfer(handle);
-            Account targetAccount = getTargetAccountForTransfer(handle);
+        PendingTransferTransaction pendingTransaction = transactionFactory.inTransaction(this::createPendingTransaction);
 
-            MonetaryAmount valueForTargetAccount = getCurrentValueForTargetAccount(targetAccount);
-
-            Transaction outboundPaymentTransaction = fundTransactionFactory.createTransaction(id, requestId, sourceAccountId, IN_PROGRESS, OUTBOUND_PAYMENT, transferAmount);
-            transactionRepository.createTransaction(handle, outboundPaymentTransaction);
-
-            Transaction incomingPaymentTransaction = fundTransactionFactory.createTransactionNewId(targetAccountId, IN_PROGRESS, INCOMING_PAYMENT, valueForTargetAccount);
-            transactionRepository.createTransaction(handle, incomingPaymentTransaction);
-
-            return new PendingTransaction(outboundPaymentTransaction, incomingPaymentTransaction, sourceAccount, transactionRepository);
-        }));
+        if (!pendingTransaction.canBeExecuted()) {
+            return pendingTransaction.getOutboundPaymentTransaction().withNewStatus(FAILED);
+        }
 
         return transactionFactory.inTransactionWithRollback(handle -> {
             validateAmountForTransfer(pendingTransaction.getSourceAccount());
@@ -87,6 +78,30 @@ public class CreateTransferCommand {
         }
     }
 
+    private PendingTransferTransaction createPendingTransaction(Handle handle) {
+        validateTransaction(handle);
+        Account sourceAccount = getSourceAccountForTransfer(handle);
+        Account targetAccount = getTargetAccountForTransfer(handle);
+
+        boolean enoughBalanceForTransfer = hasEnoughBalanceForTransfer(sourceAccount);
+
+        MonetaryAmount valueForTargetAccount = getCurrentValueForTargetAccount(targetAccount);
+        TransactionStatus transactionStatus = enoughBalanceForTransfer ? IN_PROGRESS : FAILED;
+
+        Transaction outboundPaymentTransaction = fundTransactionFactory.createTransaction(id, requestId, sourceAccountId, transactionStatus, OUTBOUND_PAYMENT, transferAmount);
+        transactionRepository.createTransaction(handle, outboundPaymentTransaction);
+
+        if (!enoughBalanceForTransfer) {
+            // Skip creating recipient transaction and return un-executable pending transaction
+            return new PendingTransferTransaction(outboundPaymentTransaction, null, sourceAccount, transactionRepository, false);
+        }
+
+        Transaction incomingPaymentTransaction = fundTransactionFactory.createTransactionNewId(targetAccountId, IN_PROGRESS, INCOMING_PAYMENT, valueForTargetAccount);
+        transactionRepository.createTransaction(handle, incomingPaymentTransaction);
+
+        return new PendingTransferTransaction(outboundPaymentTransaction, incomingPaymentTransaction, sourceAccount, transactionRepository, true);
+    }
+
     private void validateTransaction(Handle handle) {
         if (transactionRepository.getTransactionByRequestId(handle, requestId).isPresent()) {
             throw new ValidationException(new ValidationFailure("Transaction with given request id already processed"));
@@ -104,9 +119,13 @@ public class CreateTransferCommand {
     }
 
     private void validateAmountForTransfer(Account sourceAccount) {
-        if (sourceAccount.getAvailableBalance().isLessThan(transferAmount)) {
+        if (!hasEnoughBalanceForTransfer(sourceAccount)) {
             throw new ValidationException(new ValidationFailure("Unsufficient funds for transfer"));
         }
+    }
+
+    private boolean hasEnoughBalanceForTransfer(Account sourceAccount) {
+        return !sourceAccount.getAvailableBalance().isLessThan(transferAmount);
     }
 
     private MonetaryAmount getCurrentValueForTargetAccount(Account targetAccount) {

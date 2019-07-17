@@ -69,7 +69,6 @@ public class JDBIProvider implements TransactionFactory {
         } catch (Exception e) {
             openHandle.rollback();
             return rollbackAction.apply(openHandle);
-//            throw Throwables.propagate(e);
         } finally {
             openHandle.close();
         }
