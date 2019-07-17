@@ -10,12 +10,12 @@ import javax.inject.Singleton;
 import static spark.Spark.*;
 
 @Singleton
-public class AccountHolderAdapter extends Adapter {
+public class AccountAdapter extends Adapter {
 
     private final AccountService accountService;
 
     @Inject
-    public AccountHolderAdapter(AccountService accountService) {
+    public AccountAdapter(AccountService accountService) {
         this.accountService = accountService;
     }
 

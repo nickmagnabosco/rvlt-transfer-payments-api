@@ -2,7 +2,7 @@ package revolut.transfer.integration.transformers;
 
 import revolut.transfer.domain.commands.CreateDepositCommand;
 import revolut.transfer.domain.commands.CreateTransferCommand;
-import revolut.transfer.domain.models.transfers.FundTransactionFactory;
+import revolut.transfer.domain.models.transactions.FundTransactionFactory;
 import revolut.transfer.domain.repositories.AccountRepository;
 import revolut.transfer.domain.repositories.TransactionFactory;
 import revolut.transfer.domain.repositories.TransactionRepository;

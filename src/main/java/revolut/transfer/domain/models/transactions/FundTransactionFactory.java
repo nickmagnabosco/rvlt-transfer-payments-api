@@ -1,4 +1,4 @@
-package revolut.transfer.domain.models.transfers;
+package revolut.transfer.domain.models.transactions;
 
 import revolut.transfer.domain.models.MonetaryAmount;
 import revolut.transfer.domain.models.transactions.Transaction;

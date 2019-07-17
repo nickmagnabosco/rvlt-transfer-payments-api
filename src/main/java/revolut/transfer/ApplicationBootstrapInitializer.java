@@ -17,7 +17,7 @@ import static spark.Spark.exception;
 @Singleton
 public class ApplicationBootstrapInitializer {
     private final TransferAdapter transferAdapter;
-    private final AccountHolderAdapter accountHolderAdapter;
+    private final AccountAdapter accountHolderAdapter;
     private final String databaseUrl;
     private final String databasePassword;
     private final String databaseUser;
@@ -25,7 +25,7 @@ public class ApplicationBootstrapInitializer {
     @Inject
     public ApplicationBootstrapInitializer(
             TransferAdapter transferAdapter,
-            AccountHolderAdapter accountHolderAdapter,
+            AccountAdapter accountHolderAdapter,
             @Named("database.url") String databaseUrl,
             @Named("database.password") String databasePassword,
             @Named("database.user") String databaseUser)

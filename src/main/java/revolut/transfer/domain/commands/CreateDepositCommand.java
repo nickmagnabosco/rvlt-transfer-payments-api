@@ -9,7 +9,7 @@ import revolut.transfer.domain.exceptions.ValidationFailure;
 import revolut.transfer.domain.models.MonetaryAmount;
 import revolut.transfer.domain.models.accounts.Account;
 import revolut.transfer.domain.models.transactions.Transaction;
-import revolut.transfer.domain.models.transfers.FundTransactionFactory;
+import revolut.transfer.domain.models.transactions.FundTransactionFactory;
 import revolut.transfer.domain.repositories.AccountRepository;
 import revolut.transfer.domain.repositories.TransactionFactory;
 import revolut.transfer.domain.repositories.TransactionRepository;
@@ -18,7 +18,6 @@ import spark.utils.StringUtils;
 import java.util.List;
 
 import static revolut.transfer.domain.models.transactions.TransactionStatus.COMPLETED;
-import static revolut.transfer.domain.models.transactions.TransactionStatus.IN_PROGRESS;
 import static revolut.transfer.domain.models.transactions.TransactionType.DEPOSIT;
 
 @Value
