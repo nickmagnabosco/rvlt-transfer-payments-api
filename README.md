@@ -17,7 +17,7 @@ Build and run:
 
 Dependencies
 -----
-The project has been developed using Java 8, using the following framework and libraries:
+The project has been developed using Java 8, using the following frameworks and libraries:
 
  - sparkjava: a micro framework for creating web app in Java
  - google.guava
@@ -36,9 +36,9 @@ Application design
 ----
 The application is based on Domain Driven Design and the hexagonal architecture:
 
-   - Integration layer: represents the application's interface to communicate with the external world; it contains the adapters, DB implementations and other external dependencies implementation that 
+   - Integration layer: represents the application's interface for communicating with the external world; it contains the API adapters, DB implementations and other implementations that 
    will not affect the domain logic of the application in case of future changes (i.e. migrating from MySQL to MongoDB)    
-   - Domain layer: represents the core logic of the application; it has no dependencies with the integration layer.
+   - Domain layer: represents the core logic of the application; it has no dependency with the integration layer.
    Actions have been wrapped into a command-based pattern to keep the services simple and decoupled from the logic of the command itself 
  
 Features
@@ -47,7 +47,7 @@ Features
 The main entities and features of the application are:
   - Account holder: can have multiple accounts, with different currencies
   - Account: have an account type with an associated currency type
-    - Balance: the balance is calculated from the transaction associated with the account. The calculation take car of ignoring cancelled and pending transaction, based on the required property (available balance, balance) 
+    - Balance: the balance is calculated from the transactions associated with the account. The calculation takes care of ignoring cancelled and pending transactions, depending on the required property (available balance, balance) 
   - Transaction: represent a money transaction between accounts:
     - Deposit: add money to the specified account
     - Transfer: move money from a source account to a target account. It support transfer between different currencies (i.e. if the specified transfer amount is in GBP and the target account is in EUR,
