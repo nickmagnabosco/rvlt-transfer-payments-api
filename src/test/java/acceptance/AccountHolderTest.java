@@ -22,8 +22,7 @@ public class AccountHolderTest extends ComponentTest {
                 "MR",
                 "Jim",
                 "Don",
-                "myemail@address.com",
-                "UK"
+                "myemail@address.com"
         );
 
         AccountHolderDetails createdAccount =
@@ -66,8 +65,7 @@ public class AccountHolderTest extends ComponentTest {
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "myemail@address.com"));
 
         AccountHolderDetails response = when()
                 .get(getFullUrl("/accountHolders/" + accountHolderDetails.getId()))
@@ -91,8 +89,7 @@ public class AccountHolderTest extends ComponentTest {
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "myemail@address.com"));
 
         when()
                 .get(getFullUrl("/accountHolders/123"))

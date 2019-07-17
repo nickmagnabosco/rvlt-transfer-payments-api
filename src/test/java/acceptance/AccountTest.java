@@ -22,8 +22,7 @@ public class AccountTest extends ComponentTest {
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "myemail@address.com"));
 
         CreateAccountCommand createAccountCommand = new CreateAccountCommand("EUR");
         Account response = given()
@@ -55,8 +54,7 @@ public class AccountTest extends ComponentTest {
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "myemail@address.com"));
 
         CreateAccountCommand createAccountCommand = new CreateAccountCommand("UK");
         given()
@@ -80,8 +78,7 @@ public class AccountTest extends ComponentTest {
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "myemail@address.com"));
 
         CreateAccountCommand createAccountCommand = new CreateAccountCommand("ETH");
         given()
@@ -99,8 +96,7 @@ public class AccountTest extends ComponentTest {
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "myemail@address.com"));
 
         CreateAccountCommand createAccountCommand = new CreateAccountCommand("UK");
         Account firstAccount = given()
@@ -144,8 +140,7 @@ public class AccountTest extends ComponentTest {
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "myemail@address.com"));
 
         Account[] accounts = when()
                 .get(getFullUrl("/accountHolders/" + accountHolderDetails.getId() + "/accounts"))
@@ -166,8 +161,7 @@ public class AccountTest extends ComponentTest {
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "myemail@address.com"));
 
         CreateAccountCommand createAccountCommand = new CreateAccountCommand("UK");
         Account createdAccount = given()
@@ -197,8 +191,7 @@ public class AccountTest extends ComponentTest {
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "myemail@address.com"));
 
         when()
                 .get(getFullUrl("/accountHolders/" + accountHolderDetails.getId() + "/accounts/random123"))

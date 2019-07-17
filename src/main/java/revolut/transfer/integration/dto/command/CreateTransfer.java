@@ -16,6 +16,6 @@ public class CreateTransfer {
 
     private String requestId;
     private String targetAccountId;
-    private MonetaryAmount depositAmount;
+    private MonetaryAmount transferAmount;
 
 }

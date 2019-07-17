@@ -24,8 +24,7 @@ public class DepositTest extends ComponentTest {
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "myemail@address.com"));
 
         Account account = givenAccount(accountHolderDetails.getId(), new CreateAccountCommand("UK"));
 
@@ -64,8 +63,7 @@ public class DepositTest extends ComponentTest {
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "myemail@address.com"));
 
         Account account = givenAccount(accountHolderDetails.getId(), new CreateAccountCommand("UK"));
 
@@ -103,8 +101,7 @@ public class DepositTest extends ComponentTest {
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "myemail@address.com"));
 
         Account account = givenAccount(accountHolderDetails.getId(), new CreateAccountCommand("UK"));
 

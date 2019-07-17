@@ -56,7 +56,7 @@ public class TransactionTransformer {
                 dto.getRequestId(),
                 accountId,
                 dto.getTargetAccountId(),
-                dto.getDepositAmount().toDomain(),
+                dto.getTransferAmount().toDomain(),
                 transactionRepository,
                 transactionFactory,
                 accountRepository,

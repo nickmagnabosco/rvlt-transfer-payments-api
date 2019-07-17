@@ -14,6 +14,5 @@ public class CreateAccountHolder {
     private String firstName;
     private String lastName;
     private String emailAddress;
-    private String defaultAccountType;
 
 }

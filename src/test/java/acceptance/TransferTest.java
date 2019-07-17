@@ -25,15 +25,13 @@ public class TransferTest extends ComponentTest {
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "myemail@address.com"));
 
         AccountHolderDetails sender = givenAccountHolder(new CreateAccountHolder(
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "other@address.com"));
         Account receiverAccount = givenAccount(receiver.getId(), new CreateAccountCommand("UK"));
 
         Account senderAccount = givenAccountWithDeposit(sender.getId(),
@@ -86,15 +84,13 @@ public class TransferTest extends ComponentTest {
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "EUR"));
+                "myemail@address.com"));
 
         AccountHolderDetails sender = givenAccountHolder(new CreateAccountHolder(
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "other@address.com"));
         Account receiverAccount = givenAccount(receiver.getId(), new CreateAccountCommand("EUR"));
 
         Account senderAccount = givenAccountWithDeposit(sender.getId(),
@@ -147,15 +143,13 @@ public class TransferTest extends ComponentTest {
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "EUR"));
+                "myemail@address.com"));
 
         AccountHolderDetails sender = givenAccountHolder(new CreateAccountHolder(
                 "MR",
                 "Clint",
                 "Eastwood",
-                "myemail@address.com",
-                "UK"));
+                "other@address.com"));
         Account receiverAccount = givenAccount(receiver.getId(), new CreateAccountCommand("EUR"));
 
         Account senderAccount = givenAccountWithDeposit(sender.getId(),
