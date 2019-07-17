@@ -109,6 +109,7 @@ RESPONSE:
           "accountType": "UK",
           "currencyType": "GBP",
           "balance": { amount: 100.0, currencyType: "GBP" },
+          "availableBalance": { amount: 100.0, currencyType: "GBP" },
           "bankAccountDetails": {
             "iban": "GB89 3704 0044 0532 0130 00",          
             "bic": "CTBAAU2S",      
@@ -133,6 +134,7 @@ RESPONSE:
       "accountType": "UK",
       "currencyType": "GBP",
       "balance": { amount: 100.0, currencyType: "GBP" },
+      "availableBalance": { amount: 100.0, currencyType: "GBP" },
       "bankAccountDetails": {
         "iban": "GB89 3704 0044 0532 0130 00",          
         "bic": "CTBAAU2S",      
@@ -151,6 +153,7 @@ RESPONSE:
       "accountType": "UK",
       "currencyType": "GBP",
       "balance": { amount: 100.0, currencyType: "GBP" },
+      "availableBalance": { amount: 100.0, currencyType: "GBP" },
       "bankAccountDetails": {
         "iban": "GB89 3704 0044 0532 0130 00",          
         "bic": "CTBAAU2S",      
